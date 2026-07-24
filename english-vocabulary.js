@@ -15,3 +15,5 @@
   const advancedItems=advanced.split(',').flatMap((s,i)=>{let [w,h]=s.split('|');return[{w,h,e:`We will ${w}.`,emoji:'🚀',level:4,category:'advanced'},{w:`${w} clearly`,h:`${h} בצורה ברורה`,e:`Try to ${w} clearly.`,emoji:'🎓',level:4,category:'advanced'}]});
   window.ENGLISH_VOCABULARY=[...seeds.flatMap(make).slice(0,2000-advancedItems.length),...advancedItems].slice(0,2000);
 })();
+
+window.MITKADMIM_VOCABULARY_TARGET=8000;
