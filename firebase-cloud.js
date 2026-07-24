@@ -56,7 +56,7 @@ async function saveCloud(force = false) {
     fitnessSavedAt: Number(state.fitness?.savedAt) || Date.now(),
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '60.2-fitness-stable'
+    appVersion: '61-cloud-admin'
   }, {merge: true});
 
   lastSavedJson = serialized;
@@ -195,7 +195,7 @@ async function saveFitnessCloud() {
     state,
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '60.3-fitness-persistence'
+    appVersion: '61-cloud-admin'
   }, {merge:true});
   // קריאה חוזרת מוודאת שהנתונים אכן הגיעו ל-Firestore ולא רק נשמרו בזיכרון המקומי.
   const check = await getDoc(ref);
