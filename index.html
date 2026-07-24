@@ -346,7 +346,7 @@
   <div id="fitnessSetupModal" class="modal-bg hidden"><div class="modal fitness-setup-modal"><div class="modal-head"><h2>בניית מסלול הכושר שלי</h2><button class="close" onclick="closeFitnessSetup()">×</button></div><p>כמה שאלות קצרות כדי להתאים אימון בטוח ונעים.</p><div class="field"><label>קבוצת גיל</label><select id="fitAge"><option value="child">ילדים 6–12</option><option value="teen">נוער 13–17</option><option value="adult" selected>מבוגרים 18–64</option><option value="senior">גיל 65 ומעלה</option></select></div><div class="field"><label>ניסיון באימוני כוח</label><select id="fitLevel"><option value="beginner">מתחילים</option><option value="regular">יש מעט ניסיון</option><option value="advanced">מתאמנים באופן קבוע</option></select></div><div class="field"><label>האם יש כאב, פציעה, מגבלה רפואית או היריון?</label><select id="fitLimit"><option value="no">לא</option><option value="yes">כן / לא בטוח</option></select><small>אם כן, האפליקציה לא תבנה אימון לפני קבלת אישור מאיש מקצוע מתאים.</small></div><div class="field"><label>ימי אימון — אפשר לשנות</label><div class="day-picker" id="fitDays"></div><small>מומלץ: ראשון, שלישי וחמישי — יום מנוחה בין האימונים.</small></div><div class="fitness-save-footer"><button class="btn wide" onclick="saveFitnessSetup()">שמירת מסלול הכושר</button></div></div></div>
   <input id="avatarFile" type="file" accept="image/*" class="hidden">
 
-  <script src="english-vocabulary.js">
+  <script src="english-vocabulary.js?v=603">
 
     // גרסה 41: טבלאות שבועיות, סימון יומי והתקדמות כושר מורחבת
     state.studyDays=state.studyDays||{};
@@ -693,7 +693,7 @@
       persistFitnessConfig();persistFitnessSnapshot();persistState();
       closeFitnessSetup();renderAll();showScreenCore('fitness',false);renderFitness();
       toast('שומר את מסלול הכושר...');
-      const result=window.MitkadmimCloud?.saveNow?await window.MitkadmimCloud.saveNow():{ok:false,reason:'local-only'};
+      const result=window.MitkadmimCloud?.saveFitnessNow?await window.MitkadmimCloud.saveFitnessNow():(window.MitkadmimCloud?.saveNow?await window.MitkadmimCloud.saveNow():{ok:false,reason:'local-only'});
       if(result.ok) toast(state.fitness.limitations?'השאלון נשמר בענן — ממתינים לאישור מקצועי':'מסלול הכושר נשמר בענן ✓');
       else if(result.reason==='not-signed-in'||result.reason==='local-only') toast('המסלול נשמר במכשיר. התחברות תשמור אותו גם בענן');
       else toast('המסלול נשמר במכשיר, אך השמירה בענן נכשלה. נסו שוב בעוד רגע');
@@ -925,7 +925,7 @@
       }
     },true);
   </script>
-  <script src="firebase-config.js"></script>
-  <script src="visitor-tracker.js"></script>
-  <script type="module" src="firebase-cloud.js"></script>
+  <script src="firebase-config.js?v=603"></script>
+  <script src="visitor-tracker.js?v=603"></script>
+  <script type="module" src="firebase-cloud.js?v=603"></script>
 </body></html>

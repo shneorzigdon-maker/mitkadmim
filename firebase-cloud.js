@@ -52,6 +52,8 @@ async function saveCloud(force = false) {
     displayName: currentUser.displayName || state.profile?.name || '',
     photoURL: currentUser.photoURL || '',
     state,
+    fitness: state.fitness || null,
+    fitnessSavedAt: Number(state.fitness?.savedAt) || Date.now(),
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
     appVersion: '60.2-fitness-stable'
@@ -78,9 +80,18 @@ async function loadOrCreate(user) {
   const snapshot = await getDoc(ref);
 
   if (snapshot.exists() && snapshot.data().state) {
-    // ממזגים בזהירות כדי שטעינה איטית מהענן לא תדרוס מסלול כושר שנשמר זה עתה.
+    // מסלול הכושר נשמר גם כשדה עצמאי. כך הוא לא הולך לאיבוד אם מצב כללי ישן נטען מהענן.
+    const data = snapshot.data();
+    const remoteState = JSON.parse(JSON.stringify(data.state || {}));
+    if (data.fitness && data.fitness.configured) {
+      const stateFitnessTime = Number(remoteState.fitness?.savedAt) || 0;
+      const explicitFitnessTime = Number(data.fitness.savedAt || data.fitnessSavedAt) || 0;
+      if (!remoteState.fitness?.configured || explicitFitnessTime >= stateFitnessTime) {
+        remoteState.fitness = data.fitness;
+      }
+    }
     applyingRemote = true;
-    bridge()?.applyState(snapshot.data().state, {preferNewestFitness: true});
+    bridge()?.applyState(remoteState, {preferNewestFitness: true});
     applyingRemote = false;
     lastSavedJson = JSON.stringify(bridge()?.getState() || {});
     await saveCloud(true); // שומר חזרה את התוצאה הממוזגת ואת זמן הכניסה.
@@ -164,9 +175,43 @@ async function boot() {
 }
 
 
+
+async function saveFitnessCloud() {
+  if (!currentUser || !bridge()) return {ok:false, reason:'not-signed-in'};
+  const state = bridge().getState();
+  const fitness = JSON.parse(JSON.stringify(state.fitness || {}));
+  if (!fitness.configured) return {ok:false, reason:'not-configured'};
+  const savedAt = Number(fitness.savedAt) || Date.now();
+  fitness.savedAt = savedAt;
+  state.fitness = fitness;
+  const ref = doc(db, 'users', currentUser.uid);
+  await setDoc(ref, {
+    uid: currentUser.uid,
+    email: currentUser.email || '',
+    displayName: currentUser.displayName || state.profile?.name || '',
+    photoURL: currentUser.photoURL || '',
+    fitness,
+    fitnessSavedAt: savedAt,
+    state,
+    updatedAt: serverTimestamp(),
+    lastSeenAt: serverTimestamp(),
+    appVersion: '60.3-fitness-persistence'
+  }, {merge:true});
+  // קריאה חוזרת מוודאת שהנתונים אכן הגיעו ל-Firestore ולא רק נשמרו בזיכרון המקומי.
+  const check = await getDoc(ref);
+  const stored = check.data()?.fitness;
+  if (!stored?.configured || Number(stored.savedAt) !== savedAt) {
+    throw new Error('fitness-verification-failed');
+  }
+  lastSavedJson = JSON.stringify(state);
+  setStatus('מסלול הכושר נשמר בענן ✓', false);
+  return {ok:true};
+}
+
 // ממשק מפורש למסכים שצריכים להמתין עד שהשמירה בענן הסתיימה.
 window.MitkadmimCloud = {
   isSignedIn: () => !!currentUser,
+  saveFitnessNow: saveFitnessCloud,
   saveNow: async () => {
     if (!currentUser) return {ok:false, reason:'not-signed-in'};
     try {
