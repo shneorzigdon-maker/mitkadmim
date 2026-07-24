@@ -54,7 +54,7 @@ async function saveCloud(force = false) {
     state,
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '60.1-sprint1'
+    appVersion: '60.2-fitness-stable'
   }, {merge: true});
 
   lastSavedJson = serialized;
@@ -78,18 +78,13 @@ async function loadOrCreate(user) {
   const snapshot = await getDoc(ref);
 
   if (snapshot.exists() && snapshot.data().state) {
+    // ממזגים בזהירות כדי שטעינה איטית מהענן לא תדרוס מסלול כושר שנשמר זה עתה.
     applyingRemote = true;
-    bridge()?.applyState(snapshot.data().state);
+    bridge()?.applyState(snapshot.data().state, {preferNewestFitness: true});
     applyingRemote = false;
     lastSavedJson = JSON.stringify(bridge()?.getState() || {});
-    await setDoc(ref, {
-      lastSeenAt: serverTimestamp(),
-      email: user.email || '',
-      displayName: user.displayName || '',
-      photoURL: user.photoURL || '',
-      appVersion: '60.1-sprint1'
-    }, {merge: true});
-    setStatus('הנתונים נטענו מהענן ✓', false);
+    await saveCloud(true); // שומר חזרה את התוצאה הממוזגת ואת זמן הכניסה.
+    setStatus('הנתונים נטענו וסונכרנו ✓', false);
   } else {
     await saveCloud(true);
   }
@@ -167,6 +162,24 @@ async function boot() {
     }
   });
 }
+
+
+// ממשק מפורש למסכים שצריכים להמתין עד שהשמירה בענן הסתיימה.
+window.MitkadmimCloud = {
+  isSignedIn: () => !!currentUser,
+  saveNow: async () => {
+    if (!currentUser) return {ok:false, reason:'not-signed-in'};
+    try {
+      clearTimeout(syncTimer);
+      await saveCloud(true);
+      return {ok:true};
+    } catch (error) {
+      console.error('Immediate cloud save failed', error);
+      setStatus(humanError(error));
+      return {ok:false, error};
+    }
+  }
+};
 
 if (location.protocol === 'file:') {
   authBox?.classList.remove('hidden');
