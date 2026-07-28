@@ -1,30 +1,59 @@
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-export function LegacyAppFrame() {
+export type LegacyAppHandle = {
+  open: (screen: string, action?: string) => void;
+};
+
+type Props = {
+  visible: boolean;
+  onRequestModernHome: () => void;
+};
+
+export const LegacyAppFrame = forwardRef<LegacyAppHandle, Props>(function LegacyAppFrame({ visible, onRequestModernHome }, ref) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
-  const [online, setOnline] = useState(navigator.onLine);
+
+  const run = (screen: string, action?: string) => {
+    const win = iframeRef.current?.contentWindow as (Window & Record<string, unknown>) | null;
+    if (!win) return;
+    try {
+      if (action && typeof win[action] === 'function') {
+        (win[action] as () => void)();
+      }
+      if (typeof win.showScreen === 'function') {
+        (win.showScreen as (id: string) => void)(screen);
+      }
+    } catch {
+      // The legacy app remains usable even when a named shortcut is unavailable.
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    open(screen, action) {
+      if (loaded) run(screen, action);
+      else window.setTimeout(() => run(screen, action), 700);
+    },
+  }), [loaded]);
 
   useEffect(() => {
-    const handleOnline = () => setOnline(true);
-    const handleOffline = () => setOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+    const listener = (event: MessageEvent) => {
+      if (event.data?.type === 'MITKADMIM_MODERN_HOME') onRequestModernHome();
     };
-  }, []);
+    window.addEventListener('message', listener);
+    return () => window.removeEventListener('message', listener);
+  }, [onRequestModernHome]);
 
   return (
-    <section className="legacy-host" aria-label="אפליקציית מתקדמים">
-      {!online && <div className="network-banner">אין כרגע חיבור לאינטרנט. חלק מהשמירה לענן תתבצע כשהחיבור יחזור.</div>}
-      {!loaded && (
+    <section className={`legacy-host ${visible ? 'visible' : 'hidden-host'}`} aria-label="אפליקציית מתקדמים">
+      {!loaded && visible && (
         <div className="loading-screen" role="status" aria-live="polite">
           <div className="spinner" />
           <strong>מתקדמים נטען…</strong>
         </div>
       )}
+      <button className="modern-home-button" type="button" onClick={onRequestModernHome} aria-label="חזרה למסך הבית החדש">⌂ בית חדש</button>
       <iframe
+        ref={iframeRef}
         className={loaded ? 'legacy-frame loaded' : 'legacy-frame'}
         src="./legacy.html"
         title="מתקדמים"
@@ -33,4 +62,4 @@ export function LegacyAppFrame() {
       />
     </section>
   );
-}
+});
