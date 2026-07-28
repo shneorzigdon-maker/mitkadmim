@@ -167,7 +167,7 @@ export function App() {
             <button onClick={() => openLegacy('path')}><span>🗺️</span><b>מפת המסלול</b><small>לראות מה כבר נפתח</small></button>
           </section>
 
-          <footer className="home-footer">מתקדמים · גרסה 64</footer>
+          <footer className="home-footer">מתקדמים · גרסה 64.1</footer>
         </div>
       ) : null}
 
