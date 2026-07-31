@@ -278,6 +278,25 @@
 <style id="cloud-auth-style">
 .cloud-auth{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#f3f1ff,#e9faf4);display:grid;place-items:center;padding:20px;font-family:Arial,sans-serif}.cloud-auth.hidden{display:none}.cloud-auth-card{width:min(460px,100%);background:#fff;border:1px solid #e4e6ef;border-radius:28px;padding:28px;box-shadow:0 28px 75px #28304a28;text-align:right}.cloud-auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}.cloud-auth-logo span{font-size:42px}.cloud-auth h1{margin:0;font-size:28px}.cloud-auth p{color:#687187;line-height:1.55}.cloud-auth input{width:100%;padding:13px 14px;border:1px solid #dfe3ec;border-radius:13px;margin:6px 0;font-size:16px}.cloud-auth button{width:100%;border:0;border-radius:13px;padding:13px;font-weight:900;font-size:15px;margin-top:9px;cursor:pointer}.cloud-google{background:#fff;color:#253047;border:1px solid #dfe3ec!important}.cloud-primary{background:#6258df;color:#fff}.cloud-secondary{background:#ece9ff;color:#554ccc}.cloud-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.cloud-sep{text-align:center;color:#9298a8;margin:14px 0;position:relative}.cloud-sep:before,.cloud-sep:after{content:"";position:absolute;top:50%;width:42%;height:1px;background:#e4e6ec}.cloud-sep:before{right:0}.cloud-sep:after{left:0}.cloud-status{min-height:22px;color:#b23b3b;font-weight:700;font-size:13px;margin-top:10px}.cloud-user-chip{position:fixed;left:14px;bottom:14px;z-index:9000;background:#fff;border:1px solid #e2e5ee;border-radius:999px;padding:8px 12px;box-shadow:0 7px 22px #2530471f;font-size:12px;font-weight:800;display:none}.cloud-user-chip.show{display:flex;align-items:center;gap:7px}.cloud-user-chip button{border:0;background:#f0edff;color:#554ccc;border-radius:999px;padding:6px 9px;font-weight:800;cursor:pointer}@media(max-width:600px){.cloud-auth-card{padding:21px}.cloud-row{grid-template-columns:1fr}}
 </style>
+
+  <script>
+    // v67.2: ניקוי חד-פעמי של מטמונים ישנים שעלולים לגרום למסך לבן.
+    (function(){
+      try{
+        if(localStorage.getItem('mitkadmim-cache-reset')!=='672'){
+          localStorage.setItem('mitkadmim-cache-reset','672');
+          if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});});}
+          if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){caches.delete(k);});});}
+        }
+      }catch(e){console.warn('Cache cleanup skipped',e);}
+      window.addEventListener('error',function(e){
+        if(e.target && e.target.tagName) return;
+        document.documentElement.dataset.bootError='1';
+        console.error('Application error',e.error||e.message);
+      });
+      window.addEventListener('unhandledrejection',function(e){console.error('Unhandled promise',e.reason);});
+    })();
+  </script>
 </head>
 <body>
 <div id="cloudAuth" class="cloud-auth hidden" dir="rtl">
@@ -337,7 +356,7 @@
         <div class="card"><h3>👥 משתמשים במכשיר</h3><p>לכל משתמש נשמרים מסלול, נקודות ומילים נפרדים.</p><button class="btn secondary wide" onclick="openUsers()">החלפת משתמש או הוספת משתמש</button></div>
         <div class="card"><h3>💾 גיבוי והעברה</h3><p>מורידים קובץ שמכיל את כל הפרופילים וההתקדמות, ואפשר לשחזר אותו במכשיר אחר.</p><button class="btn secondary wide" onclick="exportBackup()">הורדת גיבוי</button><button class="btn secondary wide" style="margin-top:10px" onclick="document.getElementById('backupFile').click()">שחזור מגיבוי</button><input id="backupFile" type="file" accept="application/json,.json" class="hidden" onchange="importBackup(event)"></div>
         <div class="card"><h3>📲 התקנת האפליקציה</h3><p id="installText">בדיקת אפשרות ההתקנה...</p><button class="btn wide" id="installBtn" onclick="installApp()">התקנת מתקדמים</button></div>
-        <div class="card"><h3>ℹ️ פרטי גרסה</h3><p><b>מתקדמים v67.0</b></p><small>גרסה מאוחדת ויציבה · 31/07/2026</small></div><div class="card" style="border-color:#f3c6ca"><h3>↻ התחלה מחדש</h3><p>מחיקת הנקודות, המילים וההתקדמות מהמכשיר הזה.</p><button class="btn wide" style="background:var(--red)" onclick="resetApp()">איפוס המסלול</button></div>
+        <div class="card"><h3>ℹ️ פרטי גרסה</h3><p><b>מתקדמים v67.2</b></p><small>גרסה מתוקנת לטעינה ישירה · 31/07/2026</small></div><div class="card" style="border-color:#f3c6ca"><h3>↻ התחלה מחדש</h3><p>מחיקת הנקודות, המילים וההתקדמות מהמכשיר הזה.</p><button class="btn wide" style="background:var(--red)" onclick="resetApp()">איפוס המסלול</button></div>
       </div><button class="btn wide" style="margin-top:18px" onclick="saveSettings()">שמירת ההגדרות</button></section>
     </main></div>
   </div></div><div id="toast" class="toast hidden"></div><div id="fitnessCoach" class="coach-pop hidden"></div>
@@ -348,8 +367,8 @@
   <div id="fitnessSetupModal" class="modal-bg hidden"><div class="modal fitness-setup-modal"><div class="modal-head"><h2>בניית מסלול הכושר שלי</h2><button class="close" onclick="closeFitnessSetup()">×</button></div><p>כמה שאלות קצרות כדי להתאים אימון בטוח ונעים.</p><div class="field"><label>קבוצת גיל</label><select id="fitAge"><option value="child">ילדים 6–12</option><option value="teen">נוער 13–17</option><option value="adult" selected>מבוגרים 18–64</option><option value="senior">גיל 65 ומעלה</option></select></div><div class="field"><label>ניסיון באימוני כוח</label><select id="fitLevel"><option value="beginner">מתחילים</option><option value="regular">יש מעט ניסיון</option><option value="advanced">מתאמנים באופן קבוע</option></select></div><div class="field"><label>האם יש כאב, פציעה או מגבלה רפואית?</label><select id="fitLimit"><option value="no">לא</option><option value="yes">כן / לא בטוח</option></select><small>אם כן, האפליקציה לא תבנה אימון לפני קבלת אישור מאיש מקצוע מתאים.</small></div><div class="field"><label>ימי אימון — אפשר לשנות</label><div class="day-picker" id="fitDays"></div><small>מומלץ: ראשון, שלישי וחמישי — יום מנוחה בין האימונים.</small></div><div class="fitness-save-footer"><button class="btn wide" onclick="saveFitnessSetup()">שמירת מסלול הכושר</button></div></div></div>
   <input id="avatarFile" type="file" accept="image/*" class="hidden">
 
-  <script src="english-vocabulary.js?v=671">
-
+  <script src="english-vocabulary.js?v=672"></script>
+  <script>
     // גרסה 41: טבלאות שבועיות, סימון יומי והתקדמות כושר מורחבת
     state.studyDays=state.studyDays||{};
     function localDateKey(d){let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
@@ -795,7 +814,7 @@
     $('#profileBtn').onclick=()=>showScreen('settings');$('#closeAvatar').onclick=()=>$('#avatarModal').classList.add('hidden');$('#avatarModal').onclick=e=>{if(e.target===$('#avatarModal'))$('#avatarModal').classList.add('hidden')};
     $('#avatarFile').onchange=e=>{let file=e.target.files[0];if(!file)return;if(!file.type.startsWith('image/'))return toast('אפשר לבחור קובץ תמונה בלבד');let reader=new FileReader();reader.onload=ev=>{let img=new Image();img.onload=()=>{let size=Math.min(img.width,img.height),canvas=document.createElement('canvas');canvas.width=canvas.height=240;let ctx=canvas.getContext('2d');ctx.drawImage(img,(img.width-size)/2,(img.height-size)/2,size,size,0,0,240,240);let a={type:'image',value:canvas.toDataURL('image/jpeg',.78)};if(avatarTarget==='onboard'){selectedAvatar=a;renderAvatarChoices('onboardAvatars')}else{state.profile.avatar=a;save();renderAvatarChoices('profileAvatars');toast('התמונה נשמרה במכשיר 📷')}};img.onerror=()=>toast('לא הצלחנו לקרוא את התמונה');img.src=ev.target.result};reader.readAsDataURL(file);e.target.value=''};
     $('#startBtn').onclick=()=>{let name=$('#nameInput').value.trim();if(!name)return toast('כדאי לכתוב שם כדי שנוכל להכיר');let domains=selectedStartDomain==='both'?['english','fitness']:[selectedStartDomain],chosenLevel=$('#levelInput').value,initialStage={zero:0,basic:1,starter:2,advanced:4}[chosenLevel]||0;state.profile={name,age:selectedAge,level:chosenLevel,time:$('#timeInput').value,avatar:selectedAvatar,domains};state.appLevel=1;state.levelTasks=0;state.placement={pending:domains.includes('english'),stage:initialStage,chosenStage:initialStage};state.lastOpen=today();save();showScreen(selectedStartDomain==='fitness'?'fitness':selectedStartDomain==='both'?'home':'englishHome')};
-    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});/* v67.2: Service Worker disabled temporarily to prevent stale blank screens. */
     window.MitkadmimCloudBridge={
       getState:()=>JSON.parse(JSON.stringify(state)),
       getActiveUserId:()=>activeUserId,
@@ -941,9 +960,9 @@
       }
     },true);
   </script>
-  <script src="firebase-config.js?v=671"></script>
-  <script src="visitor-tracker.js?v=671"></script>
-  <script type="module" src="firebase-cloud.js?v=671"></script>
-  <script type="module" src="broadcast-listener.js?v=671"></script>
-  <script type="module" src="app-live-admin.js?v=671"></script>
+  <script src="firebase-config.js?v=672"></script>
+  <script src="visitor-tracker.js?v=672"></script>
+  <script type="module" src="firebase-cloud.js?v=672"></script>
+  <script type="module" src="broadcast-listener.js?v=672"></script>
+  <script type="module" src="app-live-admin.js?v=672"></script>
 </body></html>
