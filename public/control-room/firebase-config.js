@@ -1,0 +1,1 @@
+window.MITKADMIM_FIREBASE_CONFIG={apiKey:"AIzaSyC9HxhoP7YL3e65kAxFmQWomgRDFUVez3Y",authDomain:"mitkadmim-12c54.firebaseapp.com",projectId:"mitkadmim-12c54",storageBucket:"mitkadmim-12c54.firebasestorage.app",messagingSenderId:"834208109684",appId:"1:834208109684:web:a818f2a41035f218f9ad21",measurementId:"G-L2M3903JCS"};
