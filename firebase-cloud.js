@@ -68,10 +68,13 @@ function normalizeProfileState(raw) {
 
 function cacheFitness(state) {
   if (!currentUser || !state?.fitness?.configured) return;
-  localStorage.setItem(
-    `mitkadmimFitness:${currentUser.uid}:${currentProfileId}`,
-    JSON.stringify(state.fitness)
-  );
+  const fitness = {...state.fitness, configured:true, savedAt:Number(state.fitness.savedAt)||Date.now()};
+  localStorage.setItem(`mitkadmimFitness:${currentUser.uid}:${currentProfileId}`, JSON.stringify(fitness));
+  localStorage.setItem(`mitkadmimFitnessPermanent:firebase:${currentUser.uid}:${currentProfileId}`, JSON.stringify(fitness));
+  localStorage.setItem(`mitkadmimFitnessConfig:firebase:${currentUser.uid}:${currentProfileId}`, JSON.stringify({
+    configured:true, age:fitness.age||'adult', level:fitness.level||'beginner', limitations:!!fitness.limitations,
+    days:Array.isArray(fitness.days)?fitness.days:[0,2,4], savedAt:fitness.savedAt
+  }));
 }
 
 function profileRecord(state, existing = {}) {
@@ -154,7 +157,7 @@ async function persistDocument(force = false) {
     fitnessSavedAt: Number(state.fitness?.savedAt) || Date.now(),
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '66-profile-fitness-admin-fix'
+    appVersion: '67.0-unified'
   }, {merge: true});
 
   lastSavedJson = serialized;
@@ -234,6 +237,8 @@ async function switchProfile(profileId) {
 }
 
 async function createProfile() {
+  const createButton = document.getElementById('createProfileBtn');
+  if (createButton?.disabled) return;
   if (!currentUser || !bridge()) {
     setStatus('צריך להתחבר לפני הוספת פרופיל');
     return;
@@ -248,6 +253,7 @@ async function createProfile() {
     return;
   }
   try {
+    if (createButton) { createButton.disabled = true; createButton.textContent = 'מוסיף פרופיל...'; }
     await persistDocument(true); // שומר קודם את הפרופיל הנוכחי
     const id = 'profile-' + Date.now().toString(36);
     const fresh = normalizeProfileState(bridge().createProfileState({
@@ -273,6 +279,8 @@ async function createProfile() {
     applyingRemote = false;
     console.error('Create profile failed', error);
     setStatus(humanError(error));
+  } finally {
+    if (createButton) { createButton.disabled = false; createButton.textContent = 'הוספת פרופיל'; }
   }
 }
 
