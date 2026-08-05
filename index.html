@@ -280,6 +280,21 @@
 </style>
 </head>
 <body>
+<script>
+(function(){
+  window.addEventListener('error',function(e){
+    var b=document.getElementById('startupError');
+    if(!b){b=document.createElement('div');b.id='startupError';b.dir='rtl';b.style.cssText='position:fixed;inset:16px;z-index:999999;background:#fff4f4;border:2px solid #d44;border-radius:18px;padding:20px;color:#7a1616;font-family:Arial;overflow:auto';document.body.appendChild(b)}
+    b.innerHTML='<h2>האפליקציה נתקלה בשגיאה</h2><p>'+String(e.message||'שגיאה לא ידועה')+'</p><small>גרסה 67.4</small>';
+  });
+  window.addEventListener('unhandledrejection',function(e){
+    console.error('Unhandled promise rejection',e.reason);
+  });
+  if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})}).catch(function(){})}
+  if(window.caches){caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k)}))}).catch(function(){})}
+})();
+</script>
+
 <div id="cloudAuth" class="cloud-auth hidden" dir="rtl">
   <div class="cloud-auth-card">
     <div class="cloud-auth-logo"><span>🚀</span><div><h1>ברוכים הבאים למתקדמים</h1><small>ההתקדמות נשמרת בענן</small></div></div>
@@ -308,7 +323,7 @@
 
   <div class="app"><div class="shell">
     <header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="back-top" id="globalBack" onclick="goBack()">→ חזרה</button><div class="brand"><span class="logo">🚀</span><span>מתקדמים</span></div></div><div class="stats"><span class="pill">🎯 רמה <b id="appLevel">1</b></span><span class="pill">🔥 <b id="streak">0</b> רצף</span><span class="pill">⭐ <b id="points">0</b> נקודות</span><button class="pill" onclick="openAvatarSettings()" title="שינוי פרופיל">🖼️ שינוי פרופיל</button><button class="user-chip" id="profileBtn" title="פתיחת הגדרות"><span id="headerAvatar" class="user-avatar">🦁</span><span id="headerName">הפרופיל שלי</span></button></div></header>
-    <div class="domain-switch" id="domainSwitch"><button data-go="home" onclick="showScreen('home')">🏠 ראשי</button><button data-go="english" onclick="showScreen('englishHome')">🇬🇧 אנגלית</button><button data-go="fitness" onclick="openFitnessHome()">💪 כושר</button></div><div class="version-mark">גרסה 50.1 · תיקון פתיחת כושר והתקדמות</div>
+    <div class="domain-switch" id="domainSwitch"><button data-go="home" onclick="showScreen('home')">🏠 ראשי</button><button data-go="english" onclick="showScreen('englishHome')">🇬🇧 אנגלית</button><button data-go="fitness" onclick="openFitnessHome()">💪 כושר</button></div><div class="version-mark">גרסה 67.4 · תיקון טעינה ויציבות</div>
     <div class="layout"><nav class="nav">
       <button class="active" data-screen="home" onclick="showScreen('home')"><span>🏠</span> ראשי</button><button data-screen="englishHome" onclick="showScreen('englishHome')"><span>🇬🇧</span> אנגלית</button><button data-screen="learn" onclick="showScreen('learn')"><span>📚</span> לימוד</button><button data-screen="quiz" onclick="if(!quiz.length)startQuiz();showScreen('quiz')"><span>✅</span> מבחן</button><button data-screen="game" onclick="showScreen('game')"><span>🌲</span> משחק</button><button data-screen="fitness" onclick="openFitnessHome()"><span>💪</span> כושר</button><button data-screen="path" onclick="showScreen('path')"><span>🗺️</span> מסלול</button><button data-screen="progress" onclick="openProgressArea()"><span>📈</span> התקדמות</button><button data-screen="shop" onclick="renderShop();renderRewardRoom();showScreen('shop')"><span>🎁</span> פרסים</button><button data-screen="secretRunner" onclick="showScreen('secretRunner')"><span>🎮</span> סודי</button>
     </nav><main class="main">
@@ -346,19 +361,7 @@
   <div id="fitnessSetupModal" class="modal-bg hidden"><div class="modal fitness-setup-modal"><div class="modal-head"><h2>בניית מסלול הכושר שלי</h2><button class="close" onclick="closeFitnessSetup()">×</button></div><p>כמה שאלות קצרות כדי להתאים אימון בטוח ונעים.</p><div class="field"><label>קבוצת גיל</label><select id="fitAge"><option value="child">ילדים 6–12</option><option value="teen">נוער 13–17</option><option value="adult" selected>מבוגרים 18–64</option><option value="senior">גיל 65 ומעלה</option></select></div><div class="field"><label>ניסיון באימוני כוח</label><select id="fitLevel"><option value="beginner">מתחילים</option><option value="regular">יש מעט ניסיון</option><option value="advanced">מתאמנים באופן קבוע</option></select></div><div class="field"><label>האם יש כאב, פציעה או מגבלה רפואית?</label><select id="fitLimit"><option value="no">לא</option><option value="yes">כן / לא בטוח</option></select><small>אם כן, האפליקציה לא תבנה אימון לפני קבלת אישור מאיש מקצוע מתאים.</small></div><div class="field"><label>ימי אימון — אפשר לשנות</label><div class="day-picker" id="fitDays"></div><small>מומלץ: ראשון, שלישי וחמישי — יום מנוחה בין האימונים.</small></div><div class="fitness-save-footer"><button class="btn wide" onclick="saveFitnessSetup()">שמירת מסלול הכושר</button></div></div></div>
   <input id="avatarFile" type="file" accept="image/*" class="hidden">
 
-  <script src="english-vocabulary.js?v=673">
-
-    // גרסה 41: טבלאות שבועיות, סימון יומי והתקדמות כושר מורחבת
-    state.studyDays=state.studyDays||{};
-    function localDateKey(d){let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
-    function weekDates(){let now=new Date(),sun=new Date(now);sun.setHours(12,0,0,0);sun.setDate(now.getDate()-now.getDay());return Array.from({length:7},(_,i)=>{let d=new Date(sun);d.setDate(sun.getDate()+i);return d})}
-    function weekStatusHTML(kind){let names=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'],map=kind==='fitness'?(state.fitness?.completed||{}):(state.studyDays||{}),todayKey=localDateKey(new Date());return `<div class="card week-status-card"><div class="section-title"><h3>${kind==='fitness'?'טבלת האימונים השבועית':'טבלת הלמידה השבועית'}</h3><small>ראשון עד שבת · שבת סגורה</small></div><div class="week-status-grid">${weekDates().map((d,i)=>{let key=localDateKey(d),done=!!map[key],shabbat=i===6;return `<div class="week-status-day ${done&&!shabbat?'done':''} ${key===todayKey?'today':''} ${shabbat?'shabbat':''}"><span>${names[i]}</span><span class="light">${shabbat?'🔒':done?'✓':'•'}</span><small>${shabbat?'לא פועל':done?'בוצע':'ממתין'}</small></div>`}).join('')}</div></div>`}
-    const completeV40=complete;complete=function(type,n){completeV40(type,n);if(state.completed.letters&&state.completed.words&&state.completed.quiz){state.studyDays[today()]=true;save()}renderHome()}
-    const renderHomeV40=renderHome;renderHome=function(){renderHomeV40();let road=$('#weekRoad');if(road){let done=state.studyDays||{},todayKey=localDateKey(new Date());road.innerHTML=weekDates().map((d,i)=>{let key=localDateKey(d),sh=i===6,isDone=!!done[key]&&!sh;return `<div class="road-day ${key===todayKey?'now':''} ${sh?'shabbat':''} ${isDone?'completed':''}"><i style="${isDone?'background:#35ad72;box-shadow:0 0 12px #35ad72':''}">${isDone?'✓':sh?'🔒':''}</i>${['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'][i]}</div>`}).join('');let parent=road.closest('.card');if(parent&&!parent.nextElementSibling?.classList.contains('english-week-extra'))parent.insertAdjacentHTML('afterend',`<div class="english-week-extra">${weekStatusHTML('english')}</div>`)} }
-    const renderFitnessV40=renderFitness;renderFitness=function(){renderFitnessV40();let box=$('#fitnessContent');if(!box||!state.fitness?.configured||state.fitness.limitations)return;let hero=box.querySelector('.fitness-tabs')||box.querySelector('.grid');if(hero){let holder=document.createElement('div');holder.innerHTML=weekStatusHTML('fitness');hero.parentNode.insertBefore(holder.firstElementChild,hero.nextSibling)}let logs=state.fitness.logs||[],weekKeys=new Set(weekDates().map(localDateKey)),weekDone=logs.filter(x=>weekKeys.has(x.date)).length,totalReps=logs.reduce((a,x)=>a+(x.reps||0),0),best=logs.reduce((a,x)=>Math.max(a,x.reps||0),0),goal=3,pct=Math.min(100,Math.round(weekDone/goal*100));let extra=document.createElement('div');extra.className='fitness-progress-grid';extra.innerHTML=`<div class="card mini-goal"><h3>יעד שבועי</h3><div class="fitness-stat">${weekDone}/${goal}</div><div class="progress"><i style="width:${pct}%"></i></div></div><div class="card"><h3>סך חזרות</h3><div class="fitness-stat">${totalReps}</div></div><div class="card"><h3>שיא חזרות באימון</h3><div class="fitness-stat">${best}</div></div><div class="card"><h3>האימון הבא</h3><div style="font-size:25px;font-weight:900;margin-top:12px">${nextFitnessDay().label}</div></div>`;box.appendChild(extra)}
-    const renderFitnessProgressV40=renderFitnessProgress;renderFitnessProgress=function(){renderFitnessProgressV40();let box=$('#fitnessContent'),logs=state.fitness.logs||[],last7=weekDates().map(d=>{let key=localDateKey(d),log=logs.find(x=>x.date===key);return {label:['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'][d.getDay()],value:log?.reps||0}}),max=Math.max(10,...last7.map(x=>x.value));box.insertAdjacentHTML('beforeend',`${weekStatusHTML('fitness')}<div class="card" style="margin-top:18px"><h3>חזרות לפי יום השבוע</h3><div class="chart">${last7.map(x=>`<div class="bar" style="height:${Math.max(6,x.value/max*100)}%"><em>${x.value}</em><b>${x.label}</b></div>`).join('')}</div></div><div class="card" style="margin-top:18px"><h3>💡 טיפ אישי</h3><p>${logs.length<3?'התחלה עקבית חשובה יותר מאימון ארוך. השלימו שלושה אימונים קצרים השבוע.': 'יש כבר רצף יפה. נסו לשמור על אותו קצב גם בשבוע הבא.'}</p></div>`)}
-
-</script>
+  <script src="english-vocabulary.js?v=674"></script>
   <script>
     const letters=[['A','אֵיי','apple'],['B','בִּי','ball'],['C','סִי','cat'],['D','דִי','dog'],['E','אִי','egg'],['F','אֶף','fish'],['G','ג׳י','gift'],['H','אֵייץ׳','hat'],['I','אַיי','igloo'],['J','ג׳יי','juice'],['K','קֵיי','kite'],['L','אֶל','lion'],['M','אֶם','milk'],['N','אֶן','nose'],['O','אוֹ','orange'],['P','פִּי','pen'],['Q','קְיוּ','queen'],['R','אָר','red'],['S','אֶס','sun'],['T','טִי','table'],['U','יוּ','umbrella'],['V','וִי','van'],['W','דַבְּלְיוּ','water'],['X','אֶקְס','box'],['Y','וַואי','yellow'],['Z','זִי','zebra']];
     const coreWords=[
@@ -792,7 +795,7 @@
     $('#profileBtn').onclick=()=>showScreen('settings');$('#closeAvatar').onclick=()=>$('#avatarModal').classList.add('hidden');$('#avatarModal').onclick=e=>{if(e.target===$('#avatarModal'))$('#avatarModal').classList.add('hidden')};
     $('#avatarFile').onchange=e=>{let file=e.target.files[0];if(!file)return;if(!file.type.startsWith('image/'))return toast('אפשר לבחור קובץ תמונה בלבד');let reader=new FileReader();reader.onload=ev=>{let img=new Image();img.onload=()=>{let size=Math.min(img.width,img.height),canvas=document.createElement('canvas');canvas.width=canvas.height=240;let ctx=canvas.getContext('2d');ctx.drawImage(img,(img.width-size)/2,(img.height-size)/2,size,size,0,0,240,240);let a={type:'image',value:canvas.toDataURL('image/jpeg',.78)};if(avatarTarget==='onboard'){selectedAvatar=a;renderAvatarChoices('onboardAvatars')}else{state.profile.avatar=a;save();renderAvatarChoices('profileAvatars');toast('התמונה נשמרה במכשיר 📷')}};img.onerror=()=>toast('לא הצלחנו לקרוא את התמונה');img.src=ev.target.result};reader.readAsDataURL(file);e.target.value=''};
     $('#startBtn').onclick=()=>{let name=$('#nameInput').value.trim();if(!name)return toast('כדאי לכתוב שם כדי שנוכל להכיר');let domains=selectedStartDomain==='both'?['english','fitness']:[selectedStartDomain],chosenLevel=$('#levelInput').value,initialStage={zero:0,basic:1,starter:2,advanced:4}[chosenLevel]||0;state.profile={name,age:selectedAge,level:chosenLevel,time:$('#timeInput').value,avatar:selectedAvatar,domains};state.appLevel=1;state.levelTasks=0;state.placement={pending:domains.includes('english'),stage:initialStage,chosenStage:initialStage};state.lastOpen=today();save();showScreen(selectedStartDomain==='fitness'?'fitness':selectedStartDomain==='both'?'home':'englishHome')};
-    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{})}
     window.MitkadmimCloudBridge={
       getState:()=>JSON.parse(JSON.stringify(state)),
       getActiveUserId:()=>activeUserId,
@@ -931,9 +934,9 @@
       }
     },true);
   </script>
-  <script src="firebase-config.js?v=673"></script>
-  <script src="visitor-tracker.js?v=673"></script>
-  <script type="module" src="firebase-cloud.js?v=673"></script>
-  <script type="module" src="broadcast-listener.js?v=673"></script>
-  <script type="module" src="app-live-admin.js?v=673"></script>
+  <script src="firebase-config.js?v=674"></script>
+  <script src="visitor-tracker.js?v=674"></script>
+  <script type="module" src="firebase-cloud.js?v=674"></script>
+  <script type="module" src="broadcast-listener.js?v=674"></script>
+  <script type="module" src="app-live-admin.js?v=674"></script>
 </body></html>
