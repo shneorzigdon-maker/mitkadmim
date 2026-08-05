@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="מתקדמים" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>מתקדמים v67.1 – אנגלית וכושר צעד אחר צעד</title>
+  <title>מתקדמים – אנגלית וכושר צעד אחר צעד</title>
   <style>
     :root{--ink:#182238;--muted:#697386;--purple:#6558e8;--purple2:#8276f5;--mint:#35c79a;--yellow:#ffca55;--red:#f16e78;--bg:#f5f6fb;--card:#fff;--line:#e8e9f2;--shadow:0 14px 40px rgba(42,46,94,.10)}
     *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans Hebrew",sans-serif} button,input,select{font:inherit} button{cursor:pointer}
@@ -278,25 +278,6 @@
 <style id="cloud-auth-style">
 .cloud-auth{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#f3f1ff,#e9faf4);display:grid;place-items:center;padding:20px;font-family:Arial,sans-serif}.cloud-auth.hidden{display:none}.cloud-auth-card{width:min(460px,100%);background:#fff;border:1px solid #e4e6ef;border-radius:28px;padding:28px;box-shadow:0 28px 75px #28304a28;text-align:right}.cloud-auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}.cloud-auth-logo span{font-size:42px}.cloud-auth h1{margin:0;font-size:28px}.cloud-auth p{color:#687187;line-height:1.55}.cloud-auth input{width:100%;padding:13px 14px;border:1px solid #dfe3ec;border-radius:13px;margin:6px 0;font-size:16px}.cloud-auth button{width:100%;border:0;border-radius:13px;padding:13px;font-weight:900;font-size:15px;margin-top:9px;cursor:pointer}.cloud-google{background:#fff;color:#253047;border:1px solid #dfe3ec!important}.cloud-primary{background:#6258df;color:#fff}.cloud-secondary{background:#ece9ff;color:#554ccc}.cloud-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.cloud-sep{text-align:center;color:#9298a8;margin:14px 0;position:relative}.cloud-sep:before,.cloud-sep:after{content:"";position:absolute;top:50%;width:42%;height:1px;background:#e4e6ec}.cloud-sep:before{right:0}.cloud-sep:after{left:0}.cloud-status{min-height:22px;color:#b23b3b;font-weight:700;font-size:13px;margin-top:10px}.cloud-user-chip{position:fixed;left:14px;bottom:14px;z-index:9000;background:#fff;border:1px solid #e2e5ee;border-radius:999px;padding:8px 12px;box-shadow:0 7px 22px #2530471f;font-size:12px;font-weight:800;display:none}.cloud-user-chip.show{display:flex;align-items:center;gap:7px}.cloud-user-chip button{border:0;background:#f0edff;color:#554ccc;border-radius:999px;padding:6px 9px;font-weight:800;cursor:pointer}@media(max-width:600px){.cloud-auth-card{padding:21px}.cloud-row{grid-template-columns:1fr}}
 </style>
-
-  <script>
-    // v67.2: ניקוי חד-פעמי של מטמונים ישנים שעלולים לגרום למסך לבן.
-    (function(){
-      try{
-        if(localStorage.getItem('mitkadmim-cache-reset')!=='672'){
-          localStorage.setItem('mitkadmim-cache-reset','672');
-          if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});});}
-          if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){caches.delete(k);});});}
-        }
-      }catch(e){console.warn('Cache cleanup skipped',e);}
-      window.addEventListener('error',function(e){
-        if(e.target && e.target.tagName) return;
-        document.documentElement.dataset.bootError='1';
-        console.error('Application error',e.error||e.message);
-      });
-      window.addEventListener('unhandledrejection',function(e){console.error('Unhandled promise',e.reason);});
-    })();
-  </script>
 </head>
 <body>
 <div id="cloudAuth" class="cloud-auth hidden" dir="rtl">
@@ -311,7 +292,7 @@
     <small>במחשב פרטי הנתונים נשמרים גם מקומית כגיבוי. בשבת האפליקציה ממשיכה לפעול לפי ההגדרות הקיימות.</small>
   </div>
 </div>
-<div id="cloudUserChip" class="cloud-user-chip" style="display:none"><span id="cloudUserText"></span><button id="cloudLogout">יציאה</button></div>
+<div id="cloudUserChip" class="cloud-user-chip"><span id="cloudUserText"></span><button id="cloudLogout">יציאה</button></div>
 
   <div id="entryOverlay" class="overlay hidden"><div class="entry-card"><div class="on-card"><div class="brand"><span class="logo">🚀</span> מתקדמים</div><h1>במה רוצים להתקדם?</h1><p>הבחירה קובעת אילו מסלולים יופיעו למשתמש. אפשר לבחור מסלול אחד או את שניהם.</p><div class="entry-options"><button class="entry-option english-entry" onclick="chooseStartDomain('english')"><span class="emoji">🇬🇧</span><span><strong>אנגלית</strong><br><small>לומדים מילים, מתרגלים ומתקדמים בכל יום</small></span><b>בחירת אנגלית ←</b></button><button class="entry-option fitness-entry" onclick="chooseStartDomain('fitness')"><span class="emoji">💪</span><span><strong>כושר</strong><br><small>מתאמנים, מתחזקים ועוקבים אחר ההתקדמות</small></span><b>בחירת כושר ←</b></button><button class="entry-option both-option" onclick="chooseStartDomain('both')"><span class="emoji">🚀</span><span><strong>אנגלית וגם כושר</strong><br><small>לומדים, מתאמנים ומתקדמים בשני המסלולים</small></span><b>בחירת שני המסלולים ←</b></button></div></div></div></div>
   <div id="onboarding" class="overlay hidden"><div class="onboard"><div class="on-card">
@@ -350,25 +331,23 @@
         <div class="card"><h3>⏰ זמן הלימוד</h3><div class="field"><label>שעת המבחן והתזכורת</label><input type="time" id="settingsTime"></div><div class="field"><label>כמה זמן ללמוד ביום?</label><select id="settingsMinutes"><option value="5">5 דקות</option><option value="10">10 דקות</option><option value="15">15 דקות</option><option value="20">20 דקות</option></select></div></div>
         <div class="card"><h3>🎨 מראה וצלילים</h3><div class="field"><label>סגנון התצוגה</label><select id="settingsStyle"><option value="friendly">ידידותי וצבעוני</option><option value="clean">בוגר ונקי</option></select></div><label class="pill" style="display:flex;justify-content:space-between;align-items:center"><span>צלילים והקראה</span><input type="checkbox" id="settingsSound"></label><button class="btn secondary wide" style="margin-top:14px" onclick="openAvatarSettings()">החלפת דמות או תמונה</button></div>
         <div class="card"><h3>🔔 תזכורות</h3><p>אפשר לקבל תזכורת כאשר האפליקציה פתוחה בדפדפן.</p><label class="pill" style="display:flex;justify-content:space-between;align-items:center"><span>הפעלת תזכורת</span><input type="checkbox" id="settingsReminder"></label><small id="notificationStatus"></small></div>
-        <div class="card account-settings-card"><h3>👨‍👩‍👧‍👦 חשבון ופרופילים</h3><p>אפשר ליצור כמה פרופילים נפרדים באותו חשבון. לכל פרופיל נשמרים התקדמות, כושר ופרסים משלו.</p><div class="account-email-row"><span>חשבון מחובר</span><b id="settingsAccountEmail">לא מחובר</b></div><div class="account-profile-row"><span>הפרופיל הפעיל</span><b id="settingsActiveProfile">—</b></div><button class="btn wide" type="button" id="manageProfilesBtn">ניהול והחלפת פרופילים</button><button class="btn secondary wide" style="margin-top:10px" type="button" id="settingsLogoutBtn">יציאה מהחשבון</button></div>
         <div class="card"><h3>🧭 המסלולים שלי</h3><p>אפשר להוסיף או להסיר אנגלית וכושר גם לאחר ההרשמה.</p><label class="domain-setting"><span>🇬🇧 לימוד אנגלית</span><input type="checkbox" id="domainEnglish"></label><label class="domain-setting"><span>💪 כושר והתחזקות</span><input type="checkbox" id="domainFitness"></label><button class="btn secondary wide" style="margin-top:14px" onclick="saveDomainSettings()">שמירת המסלולים</button><small id="domainSettingsNote"></small></div>
         <div class="card"><h3>🎯 התאמת המסלול</h3><p>אפשר לבצע שוב את מבחן הפתיחה ולשנות את נקודת ההתחלה.</p><button class="btn secondary wide" onclick="restartPlacement();showScreen('englishHome')">מבחן רמה מחדש</button></div>
         <div class="card"><h3>👥 משתמשים במכשיר</h3><p>לכל משתמש נשמרים מסלול, נקודות ומילים נפרדים.</p><button class="btn secondary wide" onclick="openUsers()">החלפת משתמש או הוספת משתמש</button></div>
         <div class="card"><h3>💾 גיבוי והעברה</h3><p>מורידים קובץ שמכיל את כל הפרופילים וההתקדמות, ואפשר לשחזר אותו במכשיר אחר.</p><button class="btn secondary wide" onclick="exportBackup()">הורדת גיבוי</button><button class="btn secondary wide" style="margin-top:10px" onclick="document.getElementById('backupFile').click()">שחזור מגיבוי</button><input id="backupFile" type="file" accept="application/json,.json" class="hidden" onchange="importBackup(event)"></div>
         <div class="card"><h3>📲 התקנת האפליקציה</h3><p id="installText">בדיקת אפשרות ההתקנה...</p><button class="btn wide" id="installBtn" onclick="installApp()">התקנת מתקדמים</button></div>
-        <div class="card"><h3>ℹ️ פרטי גרסה</h3><p><b>מתקדמים v67.2</b></p><small>גרסה מתוקנת לטעינה ישירה · 31/07/2026</small></div><div class="card" style="border-color:#f3c6ca"><h3>↻ התחלה מחדש</h3><p>מחיקת הנקודות, המילים וההתקדמות מהמכשיר הזה.</p><button class="btn wide" style="background:var(--red)" onclick="resetApp()">איפוס המסלול</button></div>
+        <div class="card" style="border-color:#f3c6ca"><h3>↻ התחלה מחדש</h3><p>מחיקת הנקודות, המילים וההתקדמות מהמכשיר הזה.</p><button class="btn wide" style="background:var(--red)" onclick="resetApp()">איפוס המסלול</button></div>
       </div><button class="btn wide" style="margin-top:18px" onclick="saveSettings()">שמירת ההגדרות</button></section>
     </main></div>
   </div></div><div id="toast" class="toast hidden"></div><div id="fitnessCoach" class="coach-pop hidden"></div>
   <div id="avatarModal" class="modal-bg hidden"><div class="modal"><div class="modal-head"><h2>בחירת תמונת פרופיל</h2><button class="close" id="closeAvatar">×</button></div><p>בחרו אחד משמונה פרופילים או העלו תמונה מהמכשיר.</p><div id="profileAvatars"></div></div></div>
-  <div id="profilesModal" class="modal-bg hidden"><div class="modal profiles-modal"><div class="modal-head"><h2>הפרופילים בחשבון</h2><button class="close" id="closeProfilesModal">×</button></div><p>בחרו פרופיל קיים או הוסיפו פרופיל חדש. הנתונים של כל פרופיל נשמרים בנפרד.</p><div id="profilesList" class="profiles-list"></div><div class="new-profile-box"><h3>הוספת פרופיל</h3><div class="field"><label>שם הפרופיל</label><input id="newProfileName" maxlength="30" placeholder="לדוגמה: יוסי"></div><div class="field"><label>גיל</label><select id="newProfileAge"><option value="child">ילד/ה</option><option value="teen">נער/ה</option><option value="adult">מבוגר/ת</option></select></div><div class="field"><label>מה לומדים?</label><select id="newProfileDomains"><option value="both">אנגלית וכושר</option><option value="english">אנגלית</option><option value="fitness">כושר</option></select></div><button class="btn wide" id="createProfileBtn" type="button">הוספת פרופיל</button></div></div></div>
   <div id="usersModal" class="modal-bg hidden"><div class="modal"><div class="modal-head"><h2>בחירת משתמש</h2><button class="close" onclick="closeUsers()">×</button></div><p>ההתקדמות של כל משתמש נשמרת בנפרד במכשיר.</p><div id="usersList"></div><button class="btn wide" style="margin-top:15px" onclick="addUser()">＋ הוספת משתמש חדש</button></div></div>
   <div id="placementModal" class="modal-bg hidden"><div class="modal" id="placementContent"></div></div>
   <div id="fitnessSetupModal" class="modal-bg hidden"><div class="modal fitness-setup-modal"><div class="modal-head"><h2>בניית מסלול הכושר שלי</h2><button class="close" onclick="closeFitnessSetup()">×</button></div><p>כמה שאלות קצרות כדי להתאים אימון בטוח ונעים.</p><div class="field"><label>קבוצת גיל</label><select id="fitAge"><option value="child">ילדים 6–12</option><option value="teen">נוער 13–17</option><option value="adult" selected>מבוגרים 18–64</option><option value="senior">גיל 65 ומעלה</option></select></div><div class="field"><label>ניסיון באימוני כוח</label><select id="fitLevel"><option value="beginner">מתחילים</option><option value="regular">יש מעט ניסיון</option><option value="advanced">מתאמנים באופן קבוע</option></select></div><div class="field"><label>האם יש כאב, פציעה או מגבלה רפואית?</label><select id="fitLimit"><option value="no">לא</option><option value="yes">כן / לא בטוח</option></select><small>אם כן, האפליקציה לא תבנה אימון לפני קבלת אישור מאיש מקצוע מתאים.</small></div><div class="field"><label>ימי אימון — אפשר לשנות</label><div class="day-picker" id="fitDays"></div><small>מומלץ: ראשון, שלישי וחמישי — יום מנוחה בין האימונים.</small></div><div class="fitness-save-footer"><button class="btn wide" onclick="saveFitnessSetup()">שמירת מסלול הכושר</button></div></div></div>
   <input id="avatarFile" type="file" accept="image/*" class="hidden">
 
-  <script src="english-vocabulary.js?v=672"></script>
-  <script>
+  <script src="english-vocabulary.js?v=673">
+
     // גרסה 41: טבלאות שבועיות, סימון יומי והתקדמות כושר מורחבת
     state.studyDays=state.studyDays||{};
     function localDateKey(d){let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
@@ -706,7 +685,7 @@
     };
     let fitnessTimerId=null,fitnessSeconds=0;
     function fitnessPrescription(name){let f=state.fitness;if(f.age==='gentle'){let reps=name.includes('ישיבת קיר')||name.includes('פלאנק')?'8–15 שניות':name.includes('עמידה על רגל')?'10–15 שניות לכל צד':'5–8 חזרות';return`1–2 סטים × ${reps}`}let sets=f.level==='advanced'?3:f.age==='child'||f.age==='senior'?2:3,reps=f.level==='advanced'?'10–15 חזרות':f.age==='child'?'6–10 חזרות':f.age==='senior'?'6–10 חזרות':'8–12 חזרות';if(name.includes('ישיבת קיר')||name.includes('פלאנק'))reps=f.level==='advanced'?'30–45 שניות':'15–25 שניות';if(name.includes('עמידה על רגל'))reps='20–30 שניות לכל צד';return`${sets} סטים × ${reps}`}
-    function renderFitness(){let box=$('#fitnessContent');if(!box||!state.profile)return;restoreFitnessConfig();try{const permanent=JSON.parse(localStorage.getItem('mitkadmimFitnessPermanent:'+activeUserId)||'null');if(permanent?.configured&&(!state.fitness?.configured||Number(permanent.savedAt)>Number(state.fitness?.savedAt||0)))state.fitness=Object.assign({},defaults.fitness,state.fitness||{},permanent)}catch(e){}normalizeFitnessState();let f=state.fitness;if(Array.isArray(f.days)&&f.days.includes(6)){f.days=f.days.filter(d=>d!==6);while(f.days.length<3){for(let d of [0,2,4,1,3,5])if(!f.days.includes(d)){f.days.push(d);break}}save();}if(!f.configured){box.innerHTML=`<div class="hero fitness-hero"><div><h1>מתחילים להתחזק 💪</h1><p>שלושה אימוני גוף מלא בשבוע, ללא ציוד ובהתאמה אישית.</p></div><div class="hero-art">🏃</div></div><div class="card" style="margin-top:18px;text-align:center"><div style="font-size:60px">📋</div><h2>נבנה לך תוכנית בטוחה</h2><p>נבחר גיל, רמה וימי אימון. ברירת המחדל המומלצת היא ראשון, שלישי וחמישי.</p><button class="btn" onclick="openFitnessSetup()">בניית מסלול הכושר</button></div>`;return}if(f.limitations){box.innerHTML=`<div class="hero fitness-hero"><div><h1>הבריאות קודמת לכל</h1><p>כדי להתאים אימון במקרה של כאב או מגבלה, צריך קודם אישור והנחיות מאיש מקצוע מתאים.</p></div><div class="hero-art">🩺</div></div><div class="card safety" style="margin-top:18px"><h3>לא מתחילים לפני בדיקה</h3><p>האפליקציה אינה יכולה לאבחן או להתאים תרגילים לפציעה או למצב רפואי. לאחר קבלת אישור אפשר לעדכן את השאלון.</p><button class="btn secondary" onclick="openFitnessSetup()">עדכון השאלון</button></div>`;return}let dow=new Date().getDay(),isTraining=f.days.includes(dow),done=!!f.completed[today()],next=nextFitnessDay(),total=f.logs.length,minutes=f.logs.reduce((s,x)=>s+(x.minutes||0),0),weekCount=f.logs.filter(x=>Date.now()-new Date(x.date+'T12:00:00')<7*864e5).length;box.innerHTML=`<div class="hero fitness-hero"><div><h1>${done?'האימון הושלם — כל הכבוד!':isTraining?'היום מתחזקים':'היום מתאוששים'} 💪</h1><p>${done?'השרירים נבנים גם במנוחה. האימון הבא: '+next.label:isTraining?'אימון גוף מלא ללא ציוד מחכה לך.':'האימון הבא: '+next.label+' · התאוששות היא חלק מההתקדמות.'}</p></div><div class="hero-art">${done?'🏆':isTraining?'🏋️':'🌿'}</div></div><div class="fitness-tabs"><button class="active" onclick="renderFitness()">היום</button><button onclick="renderFitnessPlan()">התוכנית</button><button onclick="renderFitnessProgress()">התקדמות</button><button onclick="openFitnessSetup()">הגדרות</button></div><div class="grid"><div class="card"><h3>אימונים שהושלמו</h3><div class="fitness-stat">${total}</div></div><div class="card"><h3>השבוע</h3><div class="fitness-stat">${weekCount}/3</div></div><div class="card"><h3>דקות פעילות</h3><div class="fitness-stat">${minutes}</div></div></div>${isTraining&&!done?`<div class="card fitness-start-card" style="margin-top:18px"><h2>אימון ${fitnessPlanForToday()} · האימון היומי שלך</h2><p>כ־20–30 דקות · גוף מלא · מנוחה של 45–75 שניות בין סטים</p><div class="fitness-reward-preview"><span>⭐ עד 100 נקודות</span><span>🏆 התקדמות בדרגה</span></div><button id="startDailyFitnessBtn" class="btn fitness-start-btn" type="button" onclick="window.startFitnessWorkout(event)">מתחילים אימון יומי ←</button></div>`:done?`<div class="card" style="margin-top:18px;text-align:center"><div style="font-size:55px">✅</div><h2>האימון של היום כבר בוצע</h2><p>אי אפשר לצבור נקודות שוב על אותו אימון. נתראה באימון הבא!</p></div>`:`<div class="card" style="margin-top:18px"><h3>🌿 משימת מנוחה</h3><p>הליכה קלה, משחק פעיל או מתיחות נעימות — רק אם זה מרגיש טוב.</p></div>`}<div class="card quick-timer-card"><h3>⏱️ טיימר מהיר לכושר</h3><div class="quick-timer-display" id="fitnessTimer">${formatFitnessTime(fitnessSeconds)}</div><div class="quick-timer-actions"><button class="btn secondary" onclick="startFitnessTimer(30)">30 שנ׳</button><button class="btn secondary" onclick="startFitnessTimer(45)">45 שנ׳</button><button class="btn secondary" onclick="startFitnessTimer(60)">דקה</button><button class="btn secondary" onclick="stopFitnessTimer()">איפוס</button></div></div><div class="card safety" style="margin-top:18px"><b>כלל בטיחות:</b> מתחילים בהדרגה. כאב חד, סחרחורת, קוצר נשימה חריג או תחושה לא טובה = עוצרים ופונים למבוגר אחראי או לאיש מקצוע.</div>`}
+    function renderFitness(){let box=$('#fitnessContent');if(!box||!state.profile)return;restoreFitnessConfig();normalizeFitnessState();let f=state.fitness;if(Array.isArray(f.days)&&f.days.includes(6)){f.days=f.days.filter(d=>d!==6);while(f.days.length<3){for(let d of [0,2,4,1,3,5])if(!f.days.includes(d)){f.days.push(d);break}}save();}if(!f.configured){box.innerHTML=`<div class="hero fitness-hero"><div><h1>מתחילים להתחזק 💪</h1><p>שלושה אימוני גוף מלא בשבוע, ללא ציוד ובהתאמה אישית.</p></div><div class="hero-art">🏃</div></div><div class="card" style="margin-top:18px;text-align:center"><div style="font-size:60px">📋</div><h2>נבנה לך תוכנית בטוחה</h2><p>נבחר גיל, רמה וימי אימון. ברירת המחדל המומלצת היא ראשון, שלישי וחמישי.</p><button class="btn" onclick="openFitnessSetup()">בניית מסלול הכושר</button></div>`;return}if(f.limitations){box.innerHTML=`<div class="hero fitness-hero"><div><h1>הבריאות קודמת לכל</h1><p>כדי להתאים אימון במקרה של כאב או מגבלה, צריך קודם אישור והנחיות מאיש מקצוע מתאים.</p></div><div class="hero-art">🩺</div></div><div class="card safety" style="margin-top:18px"><h3>לא מתחילים לפני בדיקה</h3><p>האפליקציה אינה יכולה לאבחן או להתאים תרגילים לפציעה או למצב רפואי. לאחר קבלת אישור אפשר לעדכן את השאלון.</p><button class="btn secondary" onclick="openFitnessSetup()">עדכון השאלון</button></div>`;return}let dow=new Date().getDay(),isTraining=f.days.includes(dow),done=!!f.completed[today()],next=nextFitnessDay(),total=f.logs.length,minutes=f.logs.reduce((s,x)=>s+(x.minutes||0),0),weekCount=f.logs.filter(x=>Date.now()-new Date(x.date+'T12:00:00')<7*864e5).length;box.innerHTML=`<div class="hero fitness-hero"><div><h1>${done?'האימון הושלם — כל הכבוד!':isTraining?'היום מתחזקים':'היום מתאוששים'} 💪</h1><p>${done?'השרירים נבנים גם במנוחה. האימון הבא: '+next.label:isTraining?'אימון גוף מלא ללא ציוד מחכה לך.':'האימון הבא: '+next.label+' · התאוששות היא חלק מההתקדמות.'}</p></div><div class="hero-art">${done?'🏆':isTraining?'🏋️':'🌿'}</div></div><div class="fitness-tabs"><button class="active" onclick="renderFitness()">היום</button><button onclick="renderFitnessPlan()">התוכנית</button><button onclick="renderFitnessProgress()">התקדמות</button><button onclick="openFitnessSetup()">הגדרות</button></div><div class="grid"><div class="card"><h3>אימונים שהושלמו</h3><div class="fitness-stat">${total}</div></div><div class="card"><h3>השבוע</h3><div class="fitness-stat">${weekCount}/3</div></div><div class="card"><h3>דקות פעילות</h3><div class="fitness-stat">${minutes}</div></div></div>${isTraining&&!done?`<div class="card fitness-start-card" style="margin-top:18px"><h2>אימון ${fitnessPlanForToday()} · האימון היומי שלך</h2><p>כ־20–30 דקות · גוף מלא · מנוחה של 45–75 שניות בין סטים</p><div class="fitness-reward-preview"><span>⭐ עד 100 נקודות</span><span>🏆 התקדמות בדרגה</span></div><button id="startDailyFitnessBtn" class="btn fitness-start-btn" type="button" onclick="window.startFitnessWorkout(event)">מתחילים אימון יומי ←</button></div>`:done?`<div class="card" style="margin-top:18px;text-align:center"><div style="font-size:55px">✅</div><h2>האימון של היום כבר בוצע</h2><p>אי אפשר לצבור נקודות שוב על אותו אימון. נתראה באימון הבא!</p></div>`:`<div class="card" style="margin-top:18px"><h3>🌿 משימת מנוחה</h3><p>הליכה קלה, משחק פעיל או מתיחות נעימות — רק אם זה מרגיש טוב.</p></div>`}<div class="card quick-timer-card"><h3>⏱️ טיימר מהיר לכושר</h3><div class="quick-timer-display" id="fitnessTimer">${formatFitnessTime(fitnessSeconds)}</div><div class="quick-timer-actions"><button class="btn secondary" onclick="startFitnessTimer(30)">30 שנ׳</button><button class="btn secondary" onclick="startFitnessTimer(45)">45 שנ׳</button><button class="btn secondary" onclick="startFitnessTimer(60)">דקה</button><button class="btn secondary" onclick="stopFitnessTimer()">איפוס</button></div></div><div class="card safety" style="margin-top:18px"><b>כלל בטיחות:</b> מתחילים בהדרגה. כאב חד, סחרחורת, קוצר נשימה חריג או תחושה לא טובה = עוצרים ופונים למבוגר אחראי או לאיש מקצוע.</div>`}
     function openFitnessSetup(){let f=state.fitness||defaults.fitness;$('#fitAge').value=f.age||state.profile.age||'adult';$('#fitLevel').value=f.level||'beginner';$('#fitLimit').value=f.limitations?'yes':'no';renderFitnessDays(f.days||[0,2,4]);$('#fitnessSetupModal').classList.remove('hidden')}
     function closeFitnessSetup(){$('#fitnessSetupModal').classList.add('hidden')}
     const openFitnessSetupBase=openFitnessSetup;openFitnessSetup=function(){let select=$('#fitAge');if(select&&!select.querySelector('[value="gentle"]'))select.add(new Option('מבוגרים – מסלול קל ועדין','gentle'));openFitnessSetupBase();if(state.fitness.age==='gentle')select.value='gentle'}
@@ -717,7 +696,6 @@
       if(days.length!==3)return toast('כדי לבנות את המסלול יש לבחור 3 ימים שאינם שבת');
       const savedAt=Date.now();
       state.fitness=Object.assign({},defaults.fitness,state.fitness||{},{configured:true,age:$('#fitAge').value,level:$('#fitLevel').value,limitations:$('#fitLimit').value==='yes',days,savedAt});
-      try{localStorage.setItem('mitkadmimFitnessPermanent:'+activeUserId,JSON.stringify(state.fitness))}catch(e){}
       persistFitnessConfig();persistFitnessSnapshot();persistState();
       closeFitnessSetup();renderAll();showScreenCore('fitness',false);renderFitness();
       toast('שומר את מסלול הכושר...');
@@ -814,14 +792,15 @@
     $('#profileBtn').onclick=()=>showScreen('settings');$('#closeAvatar').onclick=()=>$('#avatarModal').classList.add('hidden');$('#avatarModal').onclick=e=>{if(e.target===$('#avatarModal'))$('#avatarModal').classList.add('hidden')};
     $('#avatarFile').onchange=e=>{let file=e.target.files[0];if(!file)return;if(!file.type.startsWith('image/'))return toast('אפשר לבחור קובץ תמונה בלבד');let reader=new FileReader();reader.onload=ev=>{let img=new Image();img.onload=()=>{let size=Math.min(img.width,img.height),canvas=document.createElement('canvas');canvas.width=canvas.height=240;let ctx=canvas.getContext('2d');ctx.drawImage(img,(img.width-size)/2,(img.height-size)/2,size,size,0,0,240,240);let a={type:'image',value:canvas.toDataURL('image/jpeg',.78)};if(avatarTarget==='onboard'){selectedAvatar=a;renderAvatarChoices('onboardAvatars')}else{state.profile.avatar=a;save();renderAvatarChoices('profileAvatars');toast('התמונה נשמרה במכשיר 📷')}};img.onerror=()=>toast('לא הצלחנו לקרוא את התמונה');img.src=ev.target.result};reader.readAsDataURL(file);e.target.value=''};
     $('#startBtn').onclick=()=>{let name=$('#nameInput').value.trim();if(!name)return toast('כדאי לכתוב שם כדי שנוכל להכיר');let domains=selectedStartDomain==='both'?['english','fitness']:[selectedStartDomain],chosenLevel=$('#levelInput').value,initialStage={zero:0,basic:1,starter:2,advanced:4}[chosenLevel]||0;state.profile={name,age:selectedAge,level:chosenLevel,time:$('#timeInput').value,avatar:selectedAvatar,domains};state.appLevel=1;state.levelTasks=0;state.placement={pending:domains.includes('english'),stage:initialStage,chosenStage:initialStage};state.lastOpen=today();save();showScreen(selectedStartDomain==='fitness'?'fitness':selectedStartDomain==='both'?'home':'englishHome')};
-    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});/* v67.2: Service Worker disabled temporarily to prevent stale blank screens. */
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
     window.MitkadmimCloudBridge={
       getState:()=>JSON.parse(JSON.stringify(state)),
       getActiveUserId:()=>activeUserId,
-      activateCloudUser:(u,profileId='main')=>{
+      activateCloudUser:(u)=>{
         if(!u||!u.uid)return;
-        const cloudId='firebase:'+u.uid+':'+profileId;
+        const cloudId='firebase:'+u.uid;
         if(activeUserId!==cloudId){
+          // שומרים את המצב המקומי לפני המעבר. בכניסה ראשונה הוא ישמש כמועמד להעברה לענן.
           try{persistState()}catch(e){}
           const localCandidate=JSON.parse(JSON.stringify(state));
           activeUserId=cloudId;
@@ -830,19 +809,15 @@
           state.fitness=Object.assign({},defaults.fitness,state.fitness||{});
           state.game=Object.assign({},defaults.game||{},state.game||{});
         }
-        state.cloudUser={uid:u.uid,email:u.email||'',name:u.displayName||'',photoURL:u.photoURL||'',profileId};
+        state.cloudUser={uid:u.uid,email:u.email||'',name:u.displayName||'',photoURL:u.photoURL||''};
+        if(!state.profile&&u.displayName){
+          state.profile={name:u.displayName,age:'child',level:'zero',time:'19:00',avatar:u.photoURL?{type:'image',value:u.photoURL}:{type:'emoji',value:'🦁'},domains:['english','fitness']};
+          state.placement={pending:true,stage:0};
+        }
         userStore[activeUserId]=state;
         persistState();
         renderAll();
         openMainScreen();
-      },
-      createProfileState:(data={})=>{
-        const domains=data.domains==='english'?['english']:data.domains==='fitness'?['fitness']:['english','fitness'];
-        const fresh=JSON.parse(JSON.stringify(defaults));
-        fresh.profile={name:(data.name||'פרופיל חדש').trim(),age:data.age||'child',level:'zero',time:'19:00',avatar:{type:'emoji',value:'🦁'},domains};
-        fresh.placement={pending:domains.includes('english'),stage:0};
-        fresh.lastOpen=today();
-        return fresh;
       },
       applyState:(remote,options={})=>{
         if(!remote||typeof remote!=='object')return;
@@ -865,14 +840,10 @@
         renderAll();
         openMainScreen();
       },
-      setCloudIdentity:(u,profileId)=>window.MitkadmimCloudBridge.activateCloudUser(u,profileId)
+      setCloudIdentity:(u)=>window.MitkadmimCloudBridge.activateCloudUser(u)
     };
     checkDay();renderAll();initShabbat();openMainScreen();
   </script>
-
-<style>
-.account-settings-card{grid-column:1/-1}.account-email-row,.account-profile-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #ececf3}.account-email-row b{direction:ltr;text-align:left;overflow-wrap:anywhere}.profiles-modal{max-width:640px}.profiles-list{display:grid;gap:10px;margin:16px 0}.profile-list-item{display:flex;align-items:center;gap:12px;border:2px solid #e6e5f0;border-radius:18px;padding:12px;background:#fff}.profile-list-item.active{border-color:var(--purple);background:#f5f3ff}.profile-list-avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#eeeaff;font-size:24px;overflow:hidden}.profile-list-avatar img{width:100%;height:100%;object-fit:cover}.profile-list-copy{flex:1}.profile-list-copy b,.profile-list-copy small{display:block}.profile-list-actions{display:flex;gap:7px;flex-wrap:wrap}.profile-list-actions button{border:0;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}.profile-switch-btn{background:var(--purple);color:white}.profile-delete-btn{background:#fff0f0;color:#9b3434}.new-profile-box{background:#f7f6ff;border-radius:18px;padding:16px;margin-top:18px}@media(max-width:650px){.profile-list-item{align-items:flex-start;flex-wrap:wrap}.profile-list-actions{width:100%}.profile-list-actions button{flex:1}.account-email-row,.account-profile-row{align-items:flex-start;flex-direction:column}}
-</style>
 
 <style>
   .general-rank-card{margin-top:18px;padding:22px;background:linear-gradient(135deg,#5f55df,#27b58c);color:#fff;border:0}
@@ -960,9 +931,9 @@
       }
     },true);
   </script>
-  <script src="firebase-config.js?v=672"></script>
-  <script src="visitor-tracker.js?v=672"></script>
-  <script type="module" src="firebase-cloud.js?v=672"></script>
-  <script type="module" src="broadcast-listener.js?v=672"></script>
-  <script type="module" src="app-live-admin.js?v=672"></script>
+  <script src="firebase-config.js?v=673"></script>
+  <script src="visitor-tracker.js?v=673"></script>
+  <script type="module" src="firebase-cloud.js?v=673"></script>
+  <script type="module" src="broadcast-listener.js?v=673"></script>
+  <script type="module" src="app-live-admin.js?v=673"></script>
 </body></html>

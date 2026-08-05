@@ -4,26 +4,25 @@ import {
   createUserWithEmailAndPassword, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp
+  getFirestore, doc, getDoc, setDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const cfg = window.MITKADMIM_FIREBASE_CONFIG;
 const authBox = document.getElementById('cloudAuth');
 const status = document.getElementById('cloudAuthStatus');
+const chip = document.getElementById('cloudUserChip');
+const chipText = document.getElementById('cloudUserText');
 const emailInput = document.getElementById('cloudEmail');
 const passwordInput = document.getElementById('cloudPassword');
 
 let auth;
 let db;
 let currentUser = null;
-let currentProfileId = 'main';
-let profiles = {};
 let syncTimer = null;
 let applyingRemote = false;
 let lastSavedJson = '';
 
 const bridge = () => window.MitkadmimCloudBridge;
-const clone = value => JSON.parse(JSON.stringify(value));
 const setStatus = (text, bad = true) => {
   if (!status) return;
   status.textContent = text || '';
@@ -41,128 +40,26 @@ function humanError(error) {
   return 'לא הצלחנו להתחבר כרגע. בדקו את החיבור ונסו שוב';
 }
 
-function profileName(state, fallback = 'הפרופיל שלי') {
-  return state?.profile?.firstName || state?.profile?.name || fallback;
-}
-
-function profileAvatar(state) {
-  const avatar = state?.profile?.avatar;
-  if (typeof avatar === 'string') return {type:'emoji', value:avatar};
-  return avatar || {type:'emoji', value:'🦁'};
-}
-
-function normalizeProfileState(raw) {
-  const state = clone(raw || {});
-  state.fitness = state.fitness || {};
-  const cached = currentUser
-    ? JSON.parse(localStorage.getItem(`mitkadmimFitness:${currentUser.uid}:${currentProfileId}`) || 'null')
-    : null;
-  if ((!state.fitness.configured || !state.fitness.savedAt) && cached?.configured) {
-    state.fitness = {...state.fitness, ...cached};
-  }
-  state.fitness.completed = state.fitness.completed || {};
-  state.fitness.logs = Array.isArray(state.fitness.logs) ? state.fitness.logs : [];
-  state.fitness.days = Array.isArray(state.fitness.days) ? state.fitness.days : [0,2,4];
-  return state;
-}
-
-function cacheFitness(state) {
-  if (!currentUser || !state?.fitness?.configured) return;
-  const fitness = {...state.fitness, configured:true, savedAt:Number(state.fitness.savedAt)||Date.now()};
-  localStorage.setItem(`mitkadmimFitness:${currentUser.uid}:${currentProfileId}`, JSON.stringify(fitness));
-  localStorage.setItem(`mitkadmimFitnessPermanent:firebase:${currentUser.uid}:${currentProfileId}`, JSON.stringify(fitness));
-  localStorage.setItem(`mitkadmimFitnessConfig:firebase:${currentUser.uid}:${currentProfileId}`, JSON.stringify({
-    configured:true, age:fitness.age||'adult', level:fitness.level||'beginner', limitations:!!fitness.limitations,
-    days:Array.isArray(fitness.days)?fitness.days:[0,2,4], savedAt:fitness.savedAt
-  }));
-}
-
-function profileRecord(state, existing = {}) {
-  const normalized = normalizeProfileState(state);
-  cacheFitness(normalized);
-  return {
-    ...existing,
-    name: profileName(normalized),
-    avatar: profileAvatar(normalized),
-    state: clone(normalized),
-    fitness: clone(normalized.fitness || {}),
-    updatedAtMs: Date.now()
-  };
-}
-
-function updateSettingsAccount() {
-  const email = document.getElementById('settingsAccountEmail');
-  const active = document.getElementById('settingsActiveProfile');
-  if (email) email.textContent = currentUser?.email || 'חשבון Google מחובר';
-  if (active) active.textContent = profiles[currentProfileId]?.name || profileName(bridge()?.getState());
-}
-
-function renderProfiles() {
-  const list = document.getElementById('profilesList');
-  if (!list) return;
-  const entries = Object.entries(profiles);
-  list.innerHTML = entries.map(([id, item]) => {
-    const avatar = item.avatar || profileAvatar(item.state);
-    const avatarHtml = avatar?.type === 'image'
-      ? `<img src="${avatar.value}" alt="">`
-      : (avatar?.value || '🦁');
-    const isActive = id === currentProfileId;
-    return `<div class="profile-list-item ${isActive ? 'active' : ''}">
-      <span class="profile-list-avatar">${avatarHtml}</span>
-      <span class="profile-list-copy"><b>${item.name || profileName(item.state)}</b><small>${isActive ? 'הפרופיל הפעיל עכשיו' : 'התקדמות נפרדת'}</small></span>
-      <span class="profile-list-actions">
-        ${isActive ? '<button type="button" disabled>פעיל ✓</button>' : `<button class="profile-switch-btn" type="button" data-profile-switch="${id}">החלפה</button>`}
-        ${entries.length > 1 ? `<button class="profile-delete-btn" type="button" data-profile-delete="${id}">מחיקה</button>` : ''}
-      </span>
-    </div>`;
-  }).join('');
-  list.querySelectorAll('[data-profile-switch]').forEach(button => {
-    button.addEventListener('click', () => switchProfile(button.dataset.profileSwitch));
-  });
-  list.querySelectorAll('[data-profile-delete]').forEach(button => {
-    button.addEventListener('click', () => deleteProfile(button.dataset.profileDelete));
-  });
-}
-
-function openProfilesModal() {
-  if (!currentUser) {
-    setStatus('צריך להתחבר לחשבון כדי לנהל פרופילים');
-    return;
-  }
-  renderProfiles();
-  document.getElementById('profilesModal')?.classList.remove('hidden');
-}
-
-function closeProfilesModal() {
-  document.getElementById('profilesModal')?.classList.add('hidden');
-}
-
-async function persistDocument(force = false) {
+async function saveCloud(force = false) {
   if (!currentUser || applyingRemote || !bridge()) return;
   const state = bridge().getState();
   const serialized = JSON.stringify(state);
   if (!force && serialized === lastSavedJson) return;
 
-  profiles[currentProfileId] = profileRecord(state, profiles[currentProfileId]);
   await setDoc(doc(db, 'users', currentUser.uid), {
     uid: currentUser.uid,
     email: currentUser.email || '',
-    displayName: currentUser.displayName || '',
+    displayName: currentUser.displayName || state.profile?.name || '',
     photoURL: currentUser.photoURL || '',
-    activeProfileId: currentProfileId,
-    profiles,
-    // שדות תאימות לחדר הבקרה ולגרסאות הישנות
     state,
     fitness: state.fitness || null,
     fitnessSavedAt: Number(state.fitness?.savedAt) || Date.now(),
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '67.0-unified'
+    appVersion: '61-cloud-admin'
   }, {merge: true});
 
   lastSavedJson = serialized;
-  updateSettingsAccount();
-  renderProfiles();
   setStatus('הנתונים נשמרו בענן ✓', false);
 }
 
@@ -170,7 +67,7 @@ function scheduleSync() {
   clearTimeout(syncTimer);
   setStatus('שומר...', false);
   syncTimer = setTimeout(() => {
-    persistDocument().catch(error => {
+    saveCloud().catch(error => {
       console.error('Cloud save failed', error);
       setStatus(humanError(error));
     });
@@ -178,158 +75,42 @@ function scheduleSync() {
 }
 
 async function loadOrCreate(user) {
+  bridge()?.activateCloudUser(user);
   const ref = doc(db, 'users', user.uid);
   const snapshot = await getDoc(ref);
-  const data = snapshot.exists() ? snapshot.data() : {};
 
-  if (data.profiles && Object.keys(data.profiles).length) {
-    profiles = clone(data.profiles);
-    currentProfileId = data.activeProfileId && profiles[data.activeProfileId]
-      ? data.activeProfileId
-      : Object.keys(profiles)[0];
-  } else if (data.state) {
-    // העברה אוטומטית של כל המשתמשים הקיימים למבנה רב-פרופילים בלי לאבד נתונים.
-    currentProfileId = 'main';
-    profiles = {main: profileRecord(data.state)};
-  } else {
-    currentProfileId = 'main';
-    const localState = bridge()?.getState();
-    const initial = localState?.profile
-      ? localState
-      : bridge()?.createProfileState({name:user.displayName || 'הפרופיל שלי', age:'child', domains:'both'});
-    profiles = {main: profileRecord(initial)};
-  }
-
-  const selectedRecord = profiles[currentProfileId] || {};
-  const selected = normalizeProfileState({...selectedRecord.state, fitness: selectedRecord.state?.fitness || selectedRecord.fitness || {}});
-  bridge()?.activateCloudUser(user, currentProfileId);
-  if (selected) {
+  if (snapshot.exists() && snapshot.data().state) {
+    // מסלול הכושר נשמר גם כשדה עצמאי. כך הוא לא הולך לאיבוד אם מצב כללי ישן נטען מהענן.
+    const data = snapshot.data();
+    const remoteState = JSON.parse(JSON.stringify(data.state || {}));
+    if (data.fitness && data.fitness.configured) {
+      const stateFitnessTime = Number(remoteState.fitness?.savedAt) || 0;
+      const explicitFitnessTime = Number(data.fitness.savedAt || data.fitnessSavedAt) || 0;
+      if (!remoteState.fitness?.configured || explicitFitnessTime >= stateFitnessTime) {
+        remoteState.fitness = data.fitness;
+      }
+    }
     applyingRemote = true;
-    bridge()?.applyState(clone(selected), {preferNewestFitness: true});
-    applyingRemote = false;
-  }
-  lastSavedJson = JSON.stringify(bridge()?.getState() || {});
-  await persistDocument(true);
-  updateSettingsAccount();
-  setStatus('הנתונים נטענו וסונכרנו ✓', false);
-}
-
-async function switchProfile(profileId) {
-  if (!currentUser || !profiles[profileId] || profileId === currentProfileId) return;
-  try {
-    await persistDocument(true);
-    currentProfileId = profileId;
-    bridge()?.activateCloudUser(currentUser, currentProfileId);
-    applyingRemote = true;
-    const target = profiles[currentProfileId];
-    bridge()?.applyState(normalizeProfileState({...target.state, fitness: target.state?.fitness || target.fitness || {}}), {preferNewestFitness: true});
+    bridge()?.applyState(remoteState, {preferNewestFitness: true});
     applyingRemote = false;
     lastSavedJson = JSON.stringify(bridge()?.getState() || {});
-    await persistDocument(true);
-    closeProfilesModal();
-    window.parent?.postMessage({type:'MITKADMIM_PROFILE_CHANGED'}, '*');
-    setStatus(`עברנו לפרופיל ${profiles[currentProfileId].name} ✓`, false);
-  } catch (error) {
-    applyingRemote = false;
-    console.error(error);
-    setStatus('לא הצלחנו להחליף פרופיל כרגע');
+    await saveCloud(true); // שומר חזרה את התוצאה הממוזגת ואת זמן הכניסה.
+    setStatus('הנתונים נטענו וסונכרנו ✓', false);
+  } else {
+    await saveCloud(true);
   }
 }
 
-async function createProfile() {
-  const createButton = document.getElementById('createProfileBtn');
-  if (createButton?.disabled) return;
-  if (!currentUser || !bridge()) {
-    setStatus('צריך להתחבר לפני הוספת פרופיל');
-    return;
-  }
-  const nameInput = document.getElementById('newProfileName');
-  const ageInput = document.getElementById('newProfileAge');
-  const domainsInput = document.getElementById('newProfileDomains');
-  const name = nameInput?.value.trim();
-  if (!name) {
-    setStatus('כתבו שם לפרופיל החדש');
-    nameInput?.focus();
-    return;
-  }
-  try {
-    if (createButton) { createButton.disabled = true; createButton.textContent = 'מוסיף פרופיל...'; }
-    await persistDocument(true); // שומר קודם את הפרופיל הנוכחי
-    const id = 'profile-' + Date.now().toString(36);
-    const fresh = normalizeProfileState(bridge().createProfileState({
-      name,
-      age: ageInput?.value || 'child',
-      domains: domainsInput?.value || 'both'
-    }));
-    profiles[id] = profileRecord(fresh);
-    currentProfileId = id;
-    bridge().activateCloudUser(currentUser, currentProfileId);
-    applyingRemote = true;
-    bridge().applyState(clone(fresh), {preferNewestFitness:false});
-    applyingRemote = false;
-    lastSavedJson = '';
-    await persistDocument(true);
-    if (nameInput) nameInput.value = '';
-    renderProfiles();
-    updateSettingsAccount();
-    closeProfilesModal();
-    window.parent?.postMessage({type:'MITKADMIM_PROFILE_CHANGED'}, '*');
-    setStatus(`הפרופיל ${name} נוסף בהצלחה ✓`, false);
-  } catch (error) {
-    applyingRemote = false;
-    console.error('Create profile failed', error);
-    setStatus(humanError(error));
-  } finally {
-    if (createButton) { createButton.disabled = false; createButton.textContent = 'הוספת פרופיל'; }
-  }
-}
-
-async function deleteProfile(profileId) {
-  const ids = Object.keys(profiles);
-  if (!currentUser || !profiles[profileId] || ids.length <= 1) return;
-  const name = profiles[profileId].name || 'הפרופיל';
-  if (!confirm(`למחוק את ${name}? כל ההתקדמות של הפרופיל הזה תימחק.`)) return;
-  const wasActive = profileId === currentProfileId;
-  delete profiles[profileId];
-  if (wasActive) {
-    currentProfileId = Object.keys(profiles)[0];
-    bridge()?.activateCloudUser(currentUser, currentProfileId);
-    applyingRemote = true;
-    bridge()?.applyState(clone(profiles[currentProfileId].state), {preferNewestFitness:false});
-    applyingRemote = false;
-  }
-  await persistDocument(true);
-  await updateDoc(doc(db, 'users', currentUser.uid), {profiles, activeProfileId: currentProfileId, updatedAt: serverTimestamp()});
-  renderProfiles();
-  updateSettingsAccount();
-  window.parent?.postMessage({type:'MITKADMIM_PROFILE_CHANGED'}, '*');
-}
-
-function showSignedIn() {
+function showSignedIn(user) {
   authBox?.classList.add('hidden');
-  updateSettingsAccount();
+  chip?.classList.add('show');
+  if (chipText) chipText.textContent = user.displayName || user.email || 'מחובר לענן';
 }
 
 function showSignedOut() {
+  chip?.classList.remove('show');
   authBox?.classList.remove('hidden');
-  profiles = {};
-  currentProfileId = 'main';
-  updateSettingsAccount();
   setStatus('התחברו כדי שההתקדמות תישמר בכל מכשיר', false);
-}
-
-function bindProfileUi() {
-  document.getElementById('manageProfilesBtn')?.addEventListener('click', openProfilesModal);
-  document.getElementById('closeProfilesModal')?.addEventListener('click', closeProfilesModal);
-  document.getElementById('profilesModal')?.addEventListener('click', event => {
-    if (event.target?.id === 'profilesModal') closeProfilesModal();
-  });
-  document.getElementById('createProfileBtn')?.addEventListener('click', () => createProfile().catch(error => {
-    console.error(error);
-    setStatus('לא הצלחנו ליצור את הפרופיל');
-  }));
-  document.getElementById('settingsLogoutBtn')?.addEventListener('click', () => signOut(auth));
-  document.getElementById('cloudLogout')?.addEventListener('click', () => signOut(auth));
 }
 
 async function boot() {
@@ -342,30 +123,38 @@ async function boot() {
   const app = initializeApp(cfg);
   auth = getAuth(app);
   db = getFirestore(app);
-  bindProfileUi();
 
   document.getElementById('cloudGoogle').onclick = async () => {
     try {
       setStatus('פותח התחברות...', false);
       await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (error) { setStatus(humanError(error)); }
+    } catch (error) {
+      setStatus(humanError(error));
+    }
   };
+
   document.getElementById('cloudLogin').onclick = async () => {
     try {
       setStatus('מתחבר...', false);
       await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
-    } catch (error) { setStatus(humanError(error)); }
+    } catch (error) {
+      setStatus(humanError(error));
+    }
   };
+
   document.getElementById('cloudRegister').onclick = async () => {
     try {
       setStatus('יוצר חשבון...', false);
       await createUserWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
-    } catch (error) { setStatus(humanError(error)); }
+    } catch (error) {
+      setStatus(humanError(error));
+    }
   };
 
+  document.getElementById('cloudLogout').onclick = () => signOut(auth);
   window.addEventListener('mitkadmim:state-saved', scheduleSync);
-  window.addEventListener('online', () => currentUser && persistDocument(true).catch(console.error));
-  window.addEventListener('pagehide', () => currentUser && persistDocument(true).catch(() => {}));
+  window.addEventListener('online', () => currentUser && saveCloud(true).catch(console.error));
+  window.addEventListener('pagehide', () => currentUser && saveCloud(true).catch(() => {}));
 
   onAuthStateChanged(auth, async user => {
     currentUser = user;
@@ -374,7 +163,7 @@ async function boot() {
       showSignedOut();
       return;
     }
-    showSignedIn();
+    showSignedIn(user);
     try {
       await loadOrCreate(user);
     } catch (error) {
@@ -385,18 +174,41 @@ async function boot() {
   });
 }
 
+
+
 async function saveFitnessCloud() {
   if (!currentUser || !bridge()) return {ok:false, reason:'not-signed-in'};
   const state = bridge().getState();
-  const fitness = clone(state.fitness || {});
+  const fitness = JSON.parse(JSON.stringify(state.fitness || {}));
   if (!fitness.configured) return {ok:false, reason:'not-configured'};
-  fitness.savedAt = Number(fitness.savedAt) || Date.now();
+  const savedAt = Number(fitness.savedAt) || Date.now();
+  fitness.savedAt = savedAt;
   state.fitness = fitness;
-  profiles[currentProfileId] = profileRecord(state, profiles[currentProfileId]);
-  await persistDocument(true);
+  const ref = doc(db, 'users', currentUser.uid);
+  await setDoc(ref, {
+    uid: currentUser.uid,
+    email: currentUser.email || '',
+    displayName: currentUser.displayName || state.profile?.name || '',
+    photoURL: currentUser.photoURL || '',
+    fitness,
+    fitnessSavedAt: savedAt,
+    state,
+    updatedAt: serverTimestamp(),
+    lastSeenAt: serverTimestamp(),
+    appVersion: '61-cloud-admin'
+  }, {merge:true});
+  // קריאה חוזרת מוודאת שהנתונים אכן הגיעו ל-Firestore ולא רק נשמרו בזיכרון המקומי.
+  const check = await getDoc(ref);
+  const stored = check.data()?.fitness;
+  if (!stored?.configured || Number(stored.savedAt) !== savedAt) {
+    throw new Error('fitness-verification-failed');
+  }
+  lastSavedJson = JSON.stringify(state);
+  setStatus('מסלול הכושר נשמר בענן ✓', false);
   return {ok:true};
 }
 
+// ממשק מפורש למסכים שצריכים להמתין עד שהשמירה בענן הסתיימה.
 window.MitkadmimCloud = {
   isSignedIn: () => !!currentUser,
   saveFitnessNow: saveFitnessCloud,
@@ -404,24 +216,14 @@ window.MitkadmimCloud = {
     if (!currentUser) return {ok:false, reason:'not-signed-in'};
     try {
       clearTimeout(syncTimer);
-      await persistDocument(true);
+      await saveCloud(true);
       return {ok:true};
     } catch (error) {
       console.error('Immediate cloud save failed', error);
       setStatus(humanError(error));
       return {ok:false, error};
     }
-  },
-  openProfiles: openProfilesModal,
-  getActiveProfileId: () => currentProfileId
-};
-
-window.MitkadmimProfiles = {
-  open: openProfilesModal,
-  close: closeProfilesModal,
-  create: createProfile,
-  switchTo: switchProfile,
-  remove: deleteProfile
+  }
 };
 
 if (location.protocol === 'file:') {
