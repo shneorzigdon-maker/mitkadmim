@@ -6,7 +6,16 @@
   const O=`today|היום|📅,tomorrow|מחר|➡️,yesterday|אתמול|⬅️,now|עכשיו|⏱️,always|תמיד|♾️,never|אף פעם|🚫,sometimes|לפעמים|🔁,usually|בדרך כלל|📆,here|כאן|📍,there|שם|👉,inside|בפנים|📥,outside|בחוץ|🌳,before|לפני|⏮️,after|אחרי|⏭️,together|ביחד|🤝,again|שוב|🔄,very|מאוד|⬆️,also|גם|➕,maybe|אולי|🤔,because|מפני ש|🔗`;
   const parse=(s,pos)=>s.split(',').map(x=>{let [w,h,emoji]=x.split('|');return{w,h,emoji,pos}});
   const seeds=[...parse(N,'noun'),...parse(V,'verb'),...parse(A,'adj'),...parse(O,'other')];
-  const noun=(x)=>[[x.w,x.h],[`a ${x.w}`,`${x.h} אחד`],[`the ${x.w}`,`ה${x.h}`],[`my ${x.w}`,`${x.h} שלי`],[`this ${x.w}`,`${x.h} הזה`],[`new ${x.w}`,`${x.h} חדש`],[`big ${x.w}`,`${x.h} גדול`],[`small ${x.w}`,`${x.h} קטן`],[`one ${x.w}`,`${x.h} אחד`],[`two ${x.w}s`,`שני ${x.h}`]];
+  const nounGrammar={
+    hand:{plural:'ידיים',gender:'f'},eye:{plural:'עיניים',gender:'f'},ear:{plural:'אוזניים',gender:'f'},shoe:{plural:'נעליים',gender:'f'},
+    leg:{plural:'רגליים',gender:'f'},door:{plural:'דלתות',gender:'f'},window:{plural:'חלונות',gender:'m'},chair:{plural:'כיסאות',gender:'m'},
+    table:{plural:'שולחנות',gender:'m'},book:{plural:'ספרים',gender:'m'},apple:{plural:'תפוחים',gender:'m'},child:{plural:'ילדים',gender:'m'},
+    woman:{plural:'נשים',gender:'f'},man:{plural:'גברים',gender:'m'},city:{plural:'ערים',gender:'f'},country:{plural:'מדינות',gender:'f'},
+    family:{plural:'משפחות',gender:'f'},flower:{plural:'פרחים',gender:'m'},picture:{plural:'תמונות',gender:'f'},question:{plural:'שאלות',gender:'f'},
+    answer:{plural:'תשובות',gender:'f'},word:{plural:'מילים',gender:'f'},sentence:{plural:'משפטים',gender:'m'},month:{plural:'חודשים',gender:'m'},year:{plural:'שנים',gender:'f'}
+  };
+  const nounInfo=x=>nounGrammar[x.w]||{plural:(x.h.endsWith('ה')?x.h.slice(0,-1)+'ות':x.h+'ים'),gender:['יד','עין','אוזן','נעל','דלת','עיר','מדינה','משפחה','תמונה','שאלה','תשובה','מילה','שנה'].includes(x.h)?'f':'m'};
+  const noun=(x)=>{let g=nounInfo(x),f=g.gender==='f';return [[x.w,x.h],[`a ${x.w}`,`${f?'אחת':'אחד'} ${x.h}`],[`the ${x.w}`,`ה${x.h}`],[`my ${x.w}`,`${x.h} שלי`],[`this ${x.w}`,`${x.h} ${f?'הזאת':'הזה'}`],[`new ${x.w}`,`${x.h} ${f?'חדשה':'חדש'}`],[`big ${x.w}`,`${x.h} ${f?'גדולה':'גדול'}`],[`small ${x.w}`,`${x.h} ${f?'קטנה':'קטן'}`],[`one ${x.w}`,`${x.h} ${f?'אחת':'אחד'}`],[`two ${x.w}s`,`${f?'שתי':'שני'} ${g.plural}`]]};
   const verb=(x)=>[[x.w,x.h],[`to ${x.w}`,x.h],[`I ${x.w}`,`אני ${x.h}`],[`we ${x.w}`,`אנחנו ${x.h}`],[`can ${x.w}`,`יכול ${x.h}`],[`will ${x.w}`,`עתיד ${x.h}`],[`do not ${x.w}`,`לא ${x.h}`],[`${x.w} now`,`${x.h} עכשיו`],[`${x.w} well`,`${x.h} היטב`],[`${x.w} today`,`${x.h} היום`]];
   const adj=(x)=>[[x.w,x.h],[`very ${x.w}`,`${x.h} מאוד`],[`really ${x.w}`,`באמת ${x.h}`],[`more ${x.w}`,`יותר ${x.h}`],[`less ${x.w}`,`פחות ${x.h}`],[`feel ${x.w}`,`מרגיש ${x.h}`],[`looks ${x.w}`,`נראה ${x.h}`],[`so ${x.w}`,`כל כך ${x.h}`],[`too ${x.w}`,`${x.h} מדי`],[`quite ${x.w}`,`די ${x.h}`]];
   const other=(x)=>[[x.w,x.h],[`${x.w} here`,`${x.h} כאן`],[`${x.w} at home`,`${x.h} בבית`],[`${x.w} at school`,`${x.h} בבית הספר`],[`${x.w} with me`,`${x.h} איתי`],[`${x.w} for you`,`${x.h} בשבילך`],[`${x.w} and again`,`${x.h} ושוב`],[`${x.w}, please`,`${x.h}, בבקשה`],[`${x.w} is good`,`${x.h} זה טוב`],[`${x.w} is important`,`${x.h} זה חשוב`]];
