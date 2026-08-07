@@ -4,7 +4,7 @@
   "description": "מסלולים אישיים ללימוד אנגלית, אימוני כושר ללא ציוד ומעקב התקדמות",
   "lang": "he",
   "dir": "rtl",
-  "start_url": "./?v=680",
+  "start_url": "./?v=681",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

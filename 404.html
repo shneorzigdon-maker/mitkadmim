@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="מתקדמים" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>מתקדמים – גרסה 68.0</title>
+  <title>מתקדמים – גרסה 68.1</title>
   <style>
     :root{--ink:#182238;--muted:#697386;--purple:#6558e8;--purple2:#8276f5;--mint:#35c79a;--yellow:#ffca55;--red:#f16e78;--bg:#f5f6fb;--card:#fff;--line:#e8e9f2;--shadow:0 14px 40px rgba(42,46,94,.10)}
     *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans Hebrew",sans-serif} button,input,select{font:inherit} button{cursor:pointer}
@@ -288,7 +288,7 @@
     var b=document.getElementById('startupError');
     if(!b){b=document.createElement('div');b.id='startupError';b.dir='rtl';b.style.cssText='position:fixed;inset:16px;z-index:999999;background:#fff4f4;border:2px solid #d44;border-radius:18px;padding:20px;color:#7a1616;font-family:Arial;overflow:auto';document.body.appendChild(b)}
     var message=(e && e.message) ? e.message : 'שגיאת טעינה לא ידועה';
-    b.innerHTML='<h2>האפליקציה נתקלה בשגיאה</h2><p>'+String(message)+'</p><p>נסו לרענן באמצעות Ctrl+Shift+R.</p><small>גרסה 68.0</small>';
+    b.innerHTML='<h2>האפליקציה נתקלה בשגיאה</h2><p>'+String(message)+'</p><p>נסו לרענן באמצעות Ctrl+Shift+R.</p><small>גרסה 68.1</small>';
   });
   window.addEventListener('unhandledrejection',function(e){
     console.error('Unhandled promise rejection',e.reason);
@@ -326,7 +326,7 @@
 
   <div class="app"><div class="shell">
     <header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="back-top" id="globalBack" onclick="goBack()">→ חזרה</button><div class="brand"><span class="logo">🚀</span><span>מתקדמים</span></div></div><div class="stats"><span class="pill">🎯 רמה <b id="appLevel">1</b></span><span class="pill">🔥 <b id="streak">0</b> רצף</span><span class="pill">⭐ <b id="points">0</b> נקודות</span><button class="pill" onclick="openAvatarSettings()" title="שינוי פרופיל">🖼️ שינוי פרופיל</button><button class="user-chip" id="profileBtn" title="פתיחת הגדרות"><span id="headerAvatar" class="user-avatar">🦁</span><span id="headerName">הפרופיל שלי</span></button></div></header>
-    <div class="domain-switch" id="domainSwitch"><button data-go="home" onclick="showScreen('home')">🏠 ראשי</button><button data-go="english" onclick="showScreen('englishHome')">🇬🇧 אנגלית</button><button data-go="fitness" onclick="openFitnessHome()">💪 כושר</button></div><div class="version-mark">גרסה 68.0 · תיקון טעינה ויציבות</div>
+    <div class="domain-switch" id="domainSwitch"><button data-go="home" onclick="showScreen('home')">🏠 ראשי</button><button data-go="english" onclick="showScreen('englishHome')">🇬🇧 אנגלית</button><button data-go="fitness" onclick="openFitnessHome()">💪 כושר</button></div><div class="version-mark">גרסה 68.1 · תיקוני כושר ושמירת מסלול</div>
     <div class="layout"><nav class="nav">
       <button class="active" data-screen="home" onclick="showScreen('home')"><span>🏠</span> ראשי</button><button data-screen="englishHome" onclick="showScreen('englishHome')"><span>🇬🇧</span> אנגלית</button><button data-screen="learn" onclick="showScreen('learn')"><span>📚</span> לימוד</button><button data-screen="quiz" onclick="if(!quiz.length)startQuiz();showScreen('quiz')"><span>✅</span> מבחן</button><button data-screen="game" onclick="showScreen('game')"><span>🌲</span> משחק</button><button data-screen="fitness" onclick="openFitnessHome()"><span>💪</span> כושר</button><button data-screen="path" onclick="showScreen('path')"><span>🗺️</span> מסלול</button><button data-screen="progress" onclick="openProgressArea()"><span>📈</span> התקדמות</button><button data-screen="shop" onclick="renderShop();renderRewardRoom();showScreen('shop')"><span>🎁</span> פרסים</button><button data-screen="secretRunner" onclick="showScreen('secretRunner')"><span>🎮</span> סודי</button>
     </nav><main class="main">
@@ -364,7 +364,7 @@
   <div id="fitnessSetupModal" class="modal-bg hidden"><div class="modal fitness-setup-modal"><div class="modal-head"><h2>בניית מסלול הכושר שלי</h2><button class="close" onclick="closeFitnessSetup()">×</button></div><p>כמה שאלות קצרות כדי להתאים אימון בטוח ונעים.</p><div class="field"><label>קבוצת גיל</label><select id="fitAge"><option value="child">ילדים 6–12</option><option value="teen">נוער 13–17</option><option value="adult" selected>מבוגרים 18–64</option><option value="senior">גיל 65 ומעלה</option></select></div><div class="field"><label>ניסיון באימוני כוח</label><select id="fitLevel"><option value="beginner">מתחילים</option><option value="regular">יש מעט ניסיון</option><option value="advanced">מתאמנים באופן קבוע</option></select></div><div class="field"><label>האם יש כאב, פציעה או מגבלה רפואית?</label><select id="fitLimit"><option value="no">לא</option><option value="yes">כן / לא בטוח</option></select><small>אם כן, האפליקציה לא תבנה אימון לפני קבלת אישור מאיש מקצוע מתאים.</small></div><div class="field"><label>ימי אימון — אפשר לשנות</label><div class="day-picker" id="fitDays"></div><small>מומלץ: ראשון, שלישי וחמישי — יום מנוחה בין האימונים.</small></div><div class="fitness-save-footer"><button class="btn wide" onclick="saveFitnessSetup()">שמירת מסלול הכושר</button></div></div></div>
   <input id="avatarFile" type="file" accept="image/*" class="hidden">
 
-  <script src="english-vocabulary.js?v=680"></script>
+  <script src="english-vocabulary.js?v=681"></script>
 
 <script>
   window.safeLocalJSON = function(key, fallback) {
@@ -469,13 +469,18 @@
     }
     function restoreFitnessConfig(){
       try{
-        const raw=[localStorage.getItem(fitnessConfigKey()),localStorage.getItem(FITNESS_CONFIG_GLOBAL_KEY)].filter(Boolean);
-        const configs=raw.map(x=>{try{return JSON.parse(x)}catch(e){return null}}).filter(x=>x&&x.configured);
-        if(!configs.length)return false;
-        configs.sort((a,b)=>(Number(b.savedAt)||0)-(Number(a.savedAt)||0));
-        const cfg=configs[0];
+        const profileRaw=localStorage.getItem(fitnessConfigKey());
+        const globalRaw=localStorage.getItem(FITNESS_CONFIG_GLOBAL_KEY);
+        const parse=raw=>{try{return raw?JSON.parse(raw):null}catch(e){return null}};
+        const profileCfg=parse(profileRaw);
+        const globalCfg=parse(globalRaw);
+        // עדיפות מוחלטת למסלול של הפרופיל הפעיל. גיבוי כללי נטען רק אם הוא שייך לאותו פרופיל.
+        const cfg=(profileCfg&&profileCfg.configured)?profileCfg:
+          (globalCfg&&globalCfg.configured&&globalCfg.activeUserId===activeUserId?globalCfg:null);
+        if(!cfg)return false;
         state.fitness=Object.assign({},defaults.fitness,state.fitness||{},cfg,{configured:true});
-        state.fitness.days=Array.isArray(cfg.days)?cfg.days.map(Number):[0,2,4];
+        state.fitness.days=Array.isArray(cfg.days)?cfg.days.map(Number).filter(d=>d!==6):[0,2,4];
+        state.fitness.savedAt=Number(cfg.savedAt)||Date.now();
         return true;
       }catch(error){console.warn('Fitness config restore failed',error);return false}
     }
@@ -489,8 +494,12 @@
     }
     function restoreFitnessSnapshot(){
       try{
-        const candidates=[localStorage.getItem(fitnessStorageKey()),localStorage.getItem(FITNESS_GLOBAL_KEY)].filter(Boolean)
-          .map(raw=>{try{return JSON.parse(raw)}catch(e){return null}}).filter(x=>x&&x.fitness);
+        const profileSnapshot=localStorage.getItem(fitnessStorageKey());
+        const globalSnapshot=localStorage.getItem(FITNESS_GLOBAL_KEY);
+        const parsedProfile=profileSnapshot?(()=>{try{return JSON.parse(profileSnapshot)}catch(e){return null}})():null;
+        const parsedGlobal=globalSnapshot?(()=>{try{return JSON.parse(globalSnapshot)}catch(e){return null}})():null;
+        const candidates=[parsedProfile,(parsedGlobal&&parsedGlobal.activeUserId===activeUserId)?parsedGlobal:null]
+          .filter(x=>x&&x.fitness);
         if(!candidates.length)return;
         candidates.sort((a,b)=>(Number(b.savedAt)||0)-(Number(a.savedAt)||0));
         const snap=candidates[0],saved=Number(snap.savedAt)||0,current=Number(state.fitness?.savedAt)||0;
@@ -719,7 +728,11 @@
       const savedAt=Date.now();
       state.fitness=Object.assign({},defaults.fitness,state.fitness||{},{configured:true,age:$('#fitAge').value,level:$('#fitLevel').value,limitations:$('#fitLimit').value==='yes',days,savedAt});
       persistFitnessConfig();persistFitnessSnapshot();persistState();
-      closeFitnessSetup();renderAll();showScreenCore('fitness',false);renderFitness();
+      // נשמר מיד לפרופיל הפעיל ורק אז חוזרים למסך הכושר.
+      userStore[activeUserId]=state;
+      localStorage.setItem('mamriimUsers',JSON.stringify(userStore));
+      localStorage.setItem('mamriimState',JSON.stringify(state));
+      closeFitnessSetup();showScreenCore('fitness',false);window.renderFitness();
       toast('שומר את מסלול הכושר...');
       const result=window.MitkadmimCloud?.saveFitnessNow?await window.MitkadmimCloud.saveFitnessNow():(window.MitkadmimCloud?.saveNow?await window.MitkadmimCloud.saveNow():{ok:false,reason:'local-only'});
       if(result.ok) toast(state.fitness.limitations?'השאלון נשמר בענן — ממתינים לאישור מקצועי':'מסלול הכושר נשמר בענן ✓');
@@ -761,7 +774,7 @@
     function startFitnessTimer(seconds){clearInterval(fitnessTimerId);fitnessTimerTotal=seconds;fitnessSeconds=seconds;let el=$('#fitnessTimer');if(el)el.textContent=formatFitnessTime(fitnessSeconds);updateFitnessTimerRing();fitnessTimerId=setInterval(()=>{fitnessSeconds--;let x=$('#fitnessTimer');if(x)x.textContent=formatFitnessTime(Math.max(0,fitnessSeconds));updateFitnessTimerRing();if(fitnessSeconds<=0){clearInterval(fitnessTimerId);fitnessTimerId=null;toast('זמן המנוחה הסתיים — מוכנים לסט הבא!')}},1000)}
     function stopFitnessTimer(){clearInterval(fitnessTimerId);fitnessTimerId=null;fitnessSeconds=0;fitnessTimerTotal=0;let el=$('#fitnessTimer');if(el)el.textContent='00:00';updateFitnessTimerRing()}
     function finishFitnessWorkout(){let w=state.fitness.activeWorkout;if(!w||!fitnessPlans[w.type])return renderFitness();let need=fitnessPlans[w.type].length;if(w.done.length<need)return toast(`נשארו עוד ${need-w.done.length} תרגילים — אתם ממש קרובים!`);let minutes=Math.max(1,Math.round((Date.now()-w.started)/60000));state.fitness.completed[today()]=true;state.fitness.logs.push({date:today(),type:w.type,minutes,reps:Object.values(w.reps||{}).reduce((a,b)=>a+(Number(b)||0),0),points:100});state.fitness.activeWorkout=null;state.fitness.points=(Number(state.fitness.points)||0)+75;award(75,'איזה אלופים! האימון הושלם — קיבלתם עוד 75 נקודות 🏆');checkFitnessAchievements();recordLevelTask();progressWeeklyTask();save();stopFitnessTimer();renderFitness();setTimeout(()=>showFitnessCoach('after'),250)}
-    function renderFitnessPlan(){let days=state.fitness.days.filter(d=>d!==6),names=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];$('#fitnessContent').innerHTML=`<div class="section-title"><h2>התוכנית השבועית שלי</h2><button class="btn secondary" onclick="renderFitness()">חזרה להיום</button></div><div class="hero fitness-hero"><div><h1>3 אימוני גוף מלא</h1><p>${days.map(d=>names[d]).join(' · ')} · ללא ציוד · יום מנוחה בין אימונים מומלץ</p></div><div class="hero-art">📅</div></div><div class="grid">${['A','B','C'].map((t,i)=>`<div class="card"><span class="badge">${names[days.slice().sort((a,b)=>a-b)[i]]}</span><h2>אימון ${t}</h2>${fitnessPlans[t].map(x=>`<p>${x[0]} ${x[1]}<br><small>${fitnessPrescription(x[1])}</small></p>`).join('')}</div>`).join('')}</div><div class="card safety" style="margin-top:18px"><h3>למה שלוש פעמים?</h3><p>כך מקבלים תרגול קבוע של קבוצות השרירים הגדולות וזמן התאוששות בין האימונים. לילדים חשוב לשלב בנוסף משחק ותנועה יומיומית; למבוגרים מומלץ לשלב גם פעילות אירובית במהלך השבוע.</p><small><a href="https://www.who.int/news-room/fact-sheets/detail/physical-activity" target="_blank">הנחיות ארגון הבריאות העולמי</a> · <a href="https://www.cdc.gov/physical-activity-basics/guidelines/index.html" target="_blank">הנחיות CDC לפי גיל</a></small></div>`}
+    function renderFitnessPlan(){let days=state.fitness.days.filter(d=>d!==6),names=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];$('#fitnessContent').innerHTML=`<div class="section-title"><h2>התוכנית השבועית שלי</h2><button class="btn secondary" onclick="window.renderFitness();window.scrollTo({top:0,behavior:'smooth'})">חזרה להיום</button></div><div class="hero fitness-hero"><div><h1>3 אימוני גוף מלא</h1><p>${days.map(d=>names[d]).join(' · ')} · ללא ציוד · יום מנוחה בין אימונים מומלץ</p></div><div class="hero-art">📅</div></div><div class="grid">${['A','B','C'].map((t,i)=>`<div class="card"><span class="badge">${names[days.slice().sort((a,b)=>a-b)[i]]}</span><h2>אימון ${t}</h2>${fitnessPlans[t].map(x=>`<p>${x[0]} ${x[1]}<br><small>${fitnessPrescription(x[1])}</small></p>`).join('')}</div>`).join('')}</div><div class="card safety" style="margin-top:18px"><h3>למה שלוש פעמים?</h3><p>כך מקבלים תרגול קבוע של קבוצות השרירים הגדולות וזמן התאוששות בין האימונים. לילדים חשוב לשלב בנוסף משחק ותנועה יומיומית; למבוגרים מומלץ לשלב גם פעילות אירובית במהלך השבוע.</p><small><a href="https://www.who.int/news-room/fact-sheets/detail/physical-activity" target="_blank">הנחיות ארגון הבריאות העולמי</a> · <a href="https://www.cdc.gov/physical-activity-basics/guidelines/index.html" target="_blank">הנחיות CDC לפי גיל</a></small></div>`}
     const fitnessAchievementDefs=[
       {id:'fit3',icon:'🔥',name:'רצף ראשון',desc:'3 אימונים מתוכננים ברצף',reward:20,test:()=>fitnessStreak()>=3},
       {id:'fit7',icon:'⚡',name:'שבועות של התמדה',desc:'7 אימונים מתוכננים ברצף',reward:50,test:()=>fitnessStreak()>=7},
@@ -781,7 +794,7 @@
     function fitnessLevel(){let p=Number(state.fitness.points)||0,l=1;for(let i=1;i<fitnessRankNeeds.length;i++)if(p>=fitnessRankNeeds[i])l=i+1;return l}
     function checkFitnessAchievements(){let changed=false;fitnessAchievementDefs.forEach(a=>{if(!state.fitness.achievements.includes(a.id)&&a.test()){state.fitness.achievements.push(a.id);state.fitness.points+=a.reward;state.points+=a.reward;changed=true;toast(`הישג חדש: ${a.name} — ${a.reward} נקודות!`)}});if(changed)persistState()}
     function fitnessWeekHtml(){let names=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'],start=new Date();start.setDate(start.getDate()-start.getDay());return names.map((n,i)=>{let d=new Date(start);d.setDate(start.getDate()+i);let done=!!state.fitness.completed[dateKeyLocal(d)],rest=i===6||!state.fitness.days.includes(i);return `<div class="weekly-check ${done?'done':rest?'rest':''}">${done?'✓ ':rest?'☕ ':''}${n}</div>`}).join('')}
-    function renderFitnessProgress(){checkFitnessAchievements();let logs=state.fitness.logs,total=logs.length,mins=logs.reduce((s,x)=>s+x.minutes,0),streak=fitnessStreak(),reps=fitnessTotalReps(),lvl=fitnessLevel(),current=fitnessRankNeeds[lvl-1],next=fitnessRankNeeds[lvl]||current,maxed=lvl>=fitnessRanks.length,pct=maxed?100:Math.max(0,Math.min(100,(state.fitness.points-current)/(next-current)*100));$('#fitnessContent').innerHTML=`<div class="section-title"><h2>התקדמות והישגים בכושר</h2><button class="btn secondary" onclick="renderFitness()">חזרה להיום</button></div><div class="card fitness-rank-card"><small>הדרגה שלי בכושר</small><h1>דרגה ${lvl} · ${fitnessRanks[lvl-1]}</h1><div class="progress"><i style="width:${pct}%"></i></div><p>${maxed?'הגעת לדרגה הגבוהה ביותר!':`${state.fitness.points} מתוך ${next} נקודות לדרגה הבאה`}</p><small>כל אימון והישג מקדמים אותך לדרגה הבאה</small></div><div class="grid"><div class="card"><h3>אימונים</h3><div class="fitness-stat">${total}</div></div><div class="card"><h3>רצף אימונים</h3><div class="fitness-stat">${streak} 🔥</div></div><div class="card"><h3>חזרות מצטברות</h3><div class="fitness-stat">${reps}</div></div></div><div class="card" style="margin-top:18px"><h3>השבוע שלי</h3><div class="weekly-checks">${fitnessWeekHtml()}</div></div><div class="card" style="margin-top:18px"><h3>🏅 ההישגים שלי</h3><div class="achievement-grid">${fitnessAchievementDefs.map(a=>{let got=state.fitness.achievements.includes(a.id);return `<div class="card fit-achievement ${got?'':'locked'}"><div class="emoji">${got?a.icon:'🔒'}</div><h3>${a.name}</h3><small>${a.desc}</small><p class="reward">${got?'הושג ✓':`פרס: ${a.reward} נק׳`}</p></div>`}).join('')}</div></div><div class="card" style="margin-top:18px"><h3>האימונים האחרונים</h3>${logs.length?logs.slice(-8).reverse().map(x=>`<p>✅ ${new Date(x.date+'T12:00:00').toLocaleDateString('he-IL')} · אימון ${x.type} · ${x.minutes} דקות</p>`).join(''):'<p class="empty">לאחר האימון הראשון תופיע כאן ההתקדמות.</p>'}</div>`}
+    function renderFitnessProgress(){checkFitnessAchievements();let logs=state.fitness.logs,total=logs.length,mins=logs.reduce((s,x)=>s+x.minutes,0),streak=fitnessStreak(),reps=fitnessTotalReps(),lvl=fitnessLevel(),current=fitnessRankNeeds[lvl-1],next=fitnessRankNeeds[lvl]||current,maxed=lvl>=fitnessRanks.length,pct=maxed?100:Math.max(0,Math.min(100,(state.fitness.points-current)/(next-current)*100));$('#fitnessContent').innerHTML=`<div class="section-title"><h2>התקדמות והישגים בכושר</h2><button class="btn secondary" onclick="window.renderFitness();window.scrollTo({top:0,behavior:'smooth'})">חזרה להיום</button></div><div class="card fitness-rank-card"><small>הדרגה שלי בכושר</small><h1>דרגה ${lvl} · ${fitnessRanks[lvl-1]}</h1><div class="progress"><i style="width:${pct}%"></i></div><p>${maxed?'הגעת לדרגה הגבוהה ביותר!':`${state.fitness.points} מתוך ${next} נקודות לדרגה הבאה`}</p><small>כל אימון והישג מקדמים אותך לדרגה הבאה</small></div><div class="grid"><div class="card"><h3>אימונים</h3><div class="fitness-stat">${total}</div></div><div class="card"><h3>רצף אימונים</h3><div class="fitness-stat">${streak} 🔥</div></div><div class="card"><h3>חזרות מצטברות</h3><div class="fitness-stat">${reps}</div></div></div><div class="card" style="margin-top:18px"><h3>השבוע שלי</h3><div class="weekly-checks">${fitnessWeekHtml()}</div></div><div class="card" style="margin-top:18px"><h3>🏅 ההישגים שלי</h3><div class="achievement-grid">${fitnessAchievementDefs.map(a=>{let got=state.fitness.achievements.includes(a.id);return `<div class="card fit-achievement ${got?'':'locked'}"><div class="emoji">${got?a.icon:'🔒'}</div><h3>${a.name}</h3><small>${a.desc}</small><p class="reward">${got?'הושג ✓':`פרס: ${a.reward} נק׳`}</p></div>`}).join('')}</div></div><div class="card" style="margin-top:18px"><h3>האימונים האחרונים</h3>${logs.length?logs.slice(-8).reverse().map(x=>`<p>✅ ${new Date(x.date+'T12:00:00').toLocaleDateString('he-IL')} · אימון ${x.type} · ${x.minutes} דקות</p>`).join(''):'<p class="empty">לאחר האימון הראשון תופיע כאן ההתקדמות.</p>'}</div>`}
     const renderFitnessPlanBase=renderFitnessPlan;renderFitnessPlan=function(){renderFitnessPlanBase();let grid=$('#fitnessContent .grid');if(grid)grid.insertAdjacentHTML('afterend',fitnessTermsHelp())}
     const forestWordsByAge={
       child:[{word:'CAT',he:'חתול',emoji:'🐱'},{word:'DOG',he:'כלב',emoji:'🐶'},{word:'SUN',he:'שמש',emoji:'☀️'},{word:'BOOK',he:'ספר',emoji:'📘'},{word:'TREE',he:'עץ',emoji:'🌳'},{word:'FISH',he:'דג',emoji:'🐟'},{word:'BALL',he:'כדור',emoji:'⚽'},{word:'APPLE',he:'תפוח',emoji:'🍎'},{word:'HOUSE',he:'בית',emoji:'🏠'},{word:'BIRD',he:'ציפור',emoji:'🐦'}],
@@ -906,14 +919,15 @@
     oldRenderHomeRanks();
   };
 
+  // תוספת בטוחה למסך הכושר: משתמשת בפונקציה הקיימת fitnessWeekHtml ולא בשם שאינו קיים.
   const oldRenderFitness=window.renderFitness;
   window.renderFitness=function(){
     oldRenderFitness();
     const box=document.querySelector('#fitnessContent');
     if(!box||!state.fitness?.configured||state.fitness?.limitations)return;
-    if(!box.querySelector('.fitness-week-main')){
+    if(!box.querySelector('.fitness-week-main')&&typeof fitnessWeekHtml==='function'){
       const timer=box.querySelector('.quick-timer-card');
-      const html=`<div class="fitness-week-main">${weekStatusHTML('fitness')}</div>`;
+      const html=`<div class="card fitness-week-main" style="margin-top:18px"><h3>השבוע שלי</h3><div class="weekly-checks">${fitnessWeekHtml()}</div></div>`;
       if(timer) timer.insertAdjacentHTML('beforebegin',html); else box.insertAdjacentHTML('beforeend',html);
     }
   };
@@ -953,11 +967,11 @@
       }
     },true);
   </script>
-  <script src="firebase-config.js?v=680"></script>
-  <script src="visitor-tracker.js?v=680"></script>
-  <script type="module" src="firebase-cloud.js?v=680"></script>
-  <script type="module" src="broadcast-listener.js?v=680"></script>
-  <script type="module" src="app-live-admin.js?v=680"></script>
+  <script src="firebase-config.js?v=681"></script>
+  <script src="visitor-tracker.js?v=681"></script>
+  <script type="module" src="firebase-cloud.js?v=681"></script>
+  <script type="module" src="broadcast-listener.js?v=681"></script>
+  <script type="module" src="app-live-admin.js?v=681"></script>
 
 <script>
   // הגנת אתחול: האפליקציה המקומית תישאר זמינה גם אם Firebase מתעכב או נכשל.
