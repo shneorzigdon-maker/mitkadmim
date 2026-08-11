@@ -43,7 +43,8 @@ function humanError(error) {
 async function saveCloud(force = false) {
   if (!currentUser || applyingRemote || !bridge()) return;
   const state = bridge().getState();
-  const serialized = JSON.stringify(state);
+  const account = bridge().getAccountData ? bridge().getAccountData() : null;
+  const serialized = JSON.stringify(account || state);
   if (!force && serialized === lastSavedJson) return;
 
   await setDoc(doc(db, 'users', currentUser.uid), {
@@ -52,11 +53,13 @@ async function saveCloud(force = false) {
     displayName: currentUser.displayName || state.profile?.name || '',
     photoURL: currentUser.photoURL || '',
     state,
+    profiles: account?.profiles || null,
+    activeProfileId: account?.activeProfileId || '',
     fitness: state.fitness || null,
     fitnessSavedAt: Number(state.fitness?.savedAt) || Date.now(),
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '61-cloud-admin'
+    appVersion: '82-desert-grade12-admin'
   }, {merge: true});
 
   lastSavedJson = serialized;
@@ -79,9 +82,18 @@ async function loadOrCreate(user) {
   const ref = doc(db, 'users', user.uid);
   const snapshot = await getDoc(ref);
 
-  if (snapshot.exists() && snapshot.data().state) {
+  if (snapshot.exists() && (snapshot.data().profiles || snapshot.data().state)) {
     // מסלול הכושר נשמר גם כשדה עצמאי. כך הוא לא הולך לאיבוד אם מצב כללי ישן נטען מהענן.
     const data = snapshot.data();
+    if (data.profiles && bridge()?.applyAccountData) {
+      applyingRemote = true;
+      bridge().applyAccountData({profiles:data.profiles,activeProfileId:data.activeProfileId||''}, user);
+      applyingRemote = false;
+      lastSavedJson = JSON.stringify(bridge().getAccountData?.() || bridge().getState() || {});
+      await saveCloud(true);
+      setStatus('שלושת המשתמשים נטענו וסונכרנו ✓', false);
+      return;
+    }
     const remoteState = JSON.parse(JSON.stringify(data.state || {}));
     if (data.fitness && data.fitness.configured) {
       const stateFitnessTime = Number(remoteState.fitness?.savedAt) || 0;
@@ -184,22 +196,12 @@ async function saveFitnessCloud() {
   const savedAt = Number(fitness.savedAt) || Date.now();
   fitness.savedAt = savedAt;
   state.fitness = fitness;
+  await saveCloud(true);
   const ref = doc(db, 'users', currentUser.uid);
-  await setDoc(ref, {
-    uid: currentUser.uid,
-    email: currentUser.email || '',
-    displayName: currentUser.displayName || state.profile?.name || '',
-    photoURL: currentUser.photoURL || '',
-    fitness,
-    fitnessSavedAt: savedAt,
-    state,
-    updatedAt: serverTimestamp(),
-    lastSeenAt: serverTimestamp(),
-    appVersion: '61-cloud-admin'
-  }, {merge:true});
   // קריאה חוזרת מוודאת שהנתונים אכן הגיעו ל-Firestore ולא רק נשמרו בזיכרון המקומי.
   const check = await getDoc(ref);
-  const stored = check.data()?.fitness;
+  const activeProfileId = bridge().getActiveUserId();
+  const stored = check.data()?.profiles?.[activeProfileId]?.fitness || check.data()?.fitness;
   if (!stored?.configured || Number(stored.savedAt) !== savedAt) {
     throw new Error('fitness-verification-failed');
   }
