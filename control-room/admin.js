@@ -1,11 +1,11 @@
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
-import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithEmailAndPassword,onAuthStateChanged,signOut}from'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut,setPersistence,browserSessionPersistence}from'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import{getFirestore,doc,getDoc,collection,onSnapshot,updateDoc,deleteDoc,addDoc,serverTimestamp,Timestamp}from'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
-const app=initializeApp(window.MITKADMIM_FIREBASE_CONFIG),auth=getAuth(app),db=getFirestore(app);let users=[],currentUser=null,unsubscribeUsers=null;const $=s=>document.querySelector(s);const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const dateOf=x=>x?.toDate?x.toDate():x?new Date(x):null;const fmt=x=>dateOf(x)?.toLocaleString('he-IL')||'—';const arr=x=>Array.isArray(x)?x:[];const state=u=>u.state||{};const fit=u=>u.fitness||state(u).fitness||{};const profile=u=>state(u).profile||{};const points=u=>Number(state(u).points??state(u).score??u.points??0)||0;const name=u=>profile(u).name||u.displayName||'—';const sameDay=(a,b)=>a&&b&&a.toDateString()===b.toDateString();
+const app=initializeApp(window.MITKADMIM_FIREBASE_CONFIG,'mitkadmim-control-room-v89'),auth=getAuth(app),db=getFirestore(app);let users=[],currentUser=null,unsubscribeUsers=null;const $=s=>document.querySelector(s);const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const dateOf=x=>x?.toDate?x.toDate():x?new Date(x):null;const fmt=x=>dateOf(x)?.toLocaleString('he-IL')||'—';const arr=x=>Array.isArray(x)?x:[];const state=u=>u.state||{};const fit=u=>u.fitness||state(u).fitness||{};const profile=u=>state(u).profile||{};const points=u=>Number(state(u).points??state(u).score??u.points??0)||0;const name=u=>profile(u).name||u.displayName||'—';const sameDay=(a,b)=>a&&b&&a.toDateString()===b.toDateString();
 function logs(u){return arr(fit(u).logs||fit(u).history||state(u).fitnessHistory)}function known(u){return arr(state(u).known||state(u).knownWords||state(u).english?.known)}function logDate(x){return dateOf(x?.completedAt||x?.date||x?.createdAt||x)}function wordDate(x){return dateOf(x?.learnedAt||x?.date||x?.createdAt)}function todayWorkoutCount(u){const t=new Date();return logs(u).filter(x=>sameDay(logDate(x),t)).length}function todayWordsCount(u){const t=new Date(),dated=known(u).filter(x=>typeof x==='object'&&wordDate(x));return dated.filter(x=>sameDay(wordDate(x),t)).length||Number(state(u).wordsLearnedToday||state(u).english?.wordsToday||0)||0}function screenMinutes(u){const d=dateOf(u.currentScreenSince);return d?Math.max(0,Math.floor((Date.now()-d.getTime())/60000)):0}function needsAttention(u){const last=dateOf(u.lastActiveAt||u.lastSeenAt),inactive=last?(Date.now()-last.getTime())/864e5:999;return !!stuck(u)||inactive>7||screenMinutes(u)>20}function isOnline(u){const d=dateOf(u.lastActiveAt||u.lastSeenAt);return !!d&&(Date.now()-d.getTime()<120000)}function stuck(u){const created=dateOf(u.createdAt||u.registeredAt||u.updatedAt),ageDays=created?(Date.now()-created)/864e5:0;const issues=[];if(ageDays>3&&fit(u).configured&&logs(u).length===0)issues.push('נתקע בכושר');if(ageDays>3&&known(u).length===0)issues.push('נתקע באנגלית');return issues.join(' + ')}function screenName(s){return({home:'ראשי',englishHome:'אנגלית',learn:'לימוד',quiz:'מבחן',game:'משחק אנגלית',fitness:'כושר',path:'מסלול',progress:'התקדמות',shop:'פרסים',settings:'הגדרות',secretRunner:'משחק סודי'})[s]||s||'—'}
 function toast(msg){$('#toast').textContent=msg;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),2600)}
-$('#google').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>$('#loginStatus').textContent=e.message);$('#emailLogin').onclick=()=>signInWithEmailAndPassword(auth,$('#email').value.trim(),$('#password').value).catch(()=>$('#loginStatus').textContent='פרטי הכניסה אינם נכונים');$('#logout').onclick=()=>signOut(auth);$('#refresh').onclick=render;$('#search').oninput=renderUsers;$('#fitnessFilter').onchange=renderUsers;$('#broadcast').onclick=()=>$('#broadcastModal').classList.remove('hidden');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.add('hidden'));document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.add('hidden')});
-onAuthStateChanged(auth,async u=>{unsubscribeUsers?.();if(!u){$('#login').classList.remove('hidden');return}try{const admin=await getDoc(doc(db,'admins',u.uid));if(!admin.exists()||admin.data().enabled!==true)throw new Error('not-admin');$('#login').classList.add('hidden');$('#who').textContent=u.email||u.displayName;unsubscribeUsers=onSnapshot(collection(db,'users'),snap=>{users=snap.docs.map(d=>({uid:d.id,...d.data()}));render()},e=>{console.error(e);$('#usersTable').innerHTML='<div class="empty">לא ניתן לקרוא משתמשים. יש לפרסם את כללי Firestore המצורפים.</div>'})}catch(e){$('#loginStatus').innerHTML='החשבון מחובר, אך אינו מוגדר כמנהל.';await signOut(auth)}});
+setPersistence(auth,browserSessionPersistence).catch(console.error);const adminLogin=()=>{const email=$('#email').value.trim(),password=$('#password').value;if(!email||!password){$('#loginStatus').textContent='יש להזין אימייל וסיסמה';return}$('#loginStatus').textContent='מתחבר...';signInWithEmailAndPassword(auth,email,password).catch(()=>$('#loginStatus').textContent='האימייל או הסיסמה אינם נכונים')};$('#emailLogin').onclick=adminLogin;$('#password').addEventListener('keydown',e=>{if(e.key==='Enter')adminLogin()});$('#email').addEventListener('keydown',e=>{if(e.key==='Enter')adminLogin()});$('#logout').onclick=()=>signOut(auth);$('#refresh').onclick=render;$('#search').oninput=renderUsers;$('#fitnessFilter').onchange=renderUsers;$('#broadcast').onclick=()=>$('#broadcastModal').classList.remove('hidden');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.add('hidden'));document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.add('hidden')});
+onAuthStateChanged(auth,async u=>{unsubscribeUsers?.();if(!u){$('#login').classList.remove('hidden');return}try{const admin=await getDoc(doc(db,'admins',u.uid));if(!admin.exists()||admin.data().enabled!==true)throw new Error('not-admin');$('#login').classList.add('hidden');$('#who').textContent=u.email||u.displayName;unsubscribeUsers=onSnapshot(collection(db,'users'),snap=>{users=snap.docs.map(d=>({uid:d.id,...d.data()}));render()},e=>{console.error(e);$('#usersTable').innerHTML='<div class="empty">לא ניתן לקרוא משתמשים. יש לפרסם את כללי Firestore המצורפים.</div>'})}catch(e){$('#loginStatus').innerHTML='החשבון והסיסמה תקינים, אך החשבון אינו מוגדר כמנהל.';await signOut(auth)}});
 function render(){const now=new Date(),week=new Date(now);week.setDate(now.getDate()-7);$('#usersCount').textContent=users.length;$('#activeToday').textContent=users.filter(u=>sameDay(dateOf(u.lastSeenAt),now)).length;$('#onlineNow').textContent=users.filter(isOnline).length;$('#workoutsToday').textContent=users.reduce((n,u)=>n+todayWorkoutCount(u),0);$('#wordsToday').textContent=users.reduce((n,u)=>n+todayWordsCount(u),0);$('#newWeek').textContent=users.filter(u=>dateOf(u.createdAt||u.registeredAt||u.updatedAt)>=week).length;const ac=document.getElementById('attentionCount');if(ac)ac.textContent=users.filter(needsAttention).length;renderChart();renderRanking();renderFeedback();renderUsers()}
 function renderChart(){const canvas=$('#usersChart'),dpr=window.devicePixelRatio||1,w=Math.max(300,canvas.clientWidth),h=Math.max(180,canvas.clientHeight);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,w,h);const days=[];for(let i=13;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);days.push(d)}const vals=days.map(d=>users.filter(u=>sameDay(dateOf(u.createdAt||u.registeredAt),d)).length),max=Math.max(1,...vals),pad=30,gw=w-pad*2,gh=h-pad*2;c.strokeStyle='#e4e8f1';for(let i=0;i<4;i++){const y=pad+gh*i/3;c.beginPath();c.moveTo(pad,y);c.lineTo(w-pad,y);c.stroke()}c.strokeStyle='#6658e8';c.lineWidth=3;c.beginPath();vals.forEach((v,i)=>{const x=pad+gw*i/(vals.length-1),y=pad+gh-(v/max)*gh;i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();c.fillStyle='#6658e8';vals.forEach((v,i)=>{const x=pad+gw*i/(vals.length-1),y=pad+gh-(v/max)*gh;c.beginPath();c.arc(x,y,4,0,Math.PI*2);c.fill()});c.fillStyle='#6b7488';c.font='11px Arial';c.textAlign='center';days.forEach((d,i)=>{if(i%2===0)c.fillText(`${d.getDate()}/${d.getMonth()+1}`,pad+gw*i/(days.length-1),h-8)})}
 function renderRanking(){const top=[...users].sort((a,b)=>points(b)-points(a)).slice(0,10);$('#ranking').innerHTML=top.length?top.map((u,i)=>`<div class="rank"><b>${i+1}</b><span><strong>${esc(name(u))}</strong><br><small>${esc(u.email||'')}</small></span><b>${points(u)} נק׳</b></div>`).join(''):'<div class="empty">אין עדיין נתוני דירוג</div>'}
@@ -23,12 +23,135 @@ window.addEventListener('resize',()=>{clearTimeout(window.__chartTimer);window._
 
 function allFeedback(){return users.flatMap(u=>arr(u.feedback).map(f=>({user:u,...f}))).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')))}function renderFeedback(){const box=document.getElementById('feedbackInbox');if(!box)return;const items=allFeedback();document.getElementById('feedbackCount').textContent=`${items.length} פניות`;box.innerHTML=items.length?items.slice(0,100).map(x=>`<div class="feedback-card ${x.status==='new'?'new':''}"><div class="feedback-meta"><b>${esc(x.profileName||name(x.user))}</b><span>${esc(x.user.email||'')}</span><span>${esc(x.type||'feedback')}</span><span>${esc(x.screen||'')}</span><span>${esc(x.createdAt?new Date(x.createdAt).toLocaleString('he-IL'):'')}</span></div><p>${esc(x.body||'')}</p><div class="feedback-actions"><button class="btn small secondary feedback-reply" data-uid="${esc(x.user.uid)}">השב דרך אורי</button><button class="btn small feedback-done" data-uid="${esc(x.user.uid)}" data-id="${esc(x.id)}">סמן כטופל</button></div></div>`).join(''):'<div class="empty">אין עדיין פניות</div>';document.querySelectorAll('.feedback-reply').forEach(b=>b.onclick=()=>{const u=users.find(x=>x.uid===b.dataset.uid);if(u){openEdit(u);setTimeout(()=>document.getElementById('personalBody')?.focus(),150)}});document.querySelectorAll('.feedback-done').forEach(b=>b.onclick=()=>markFeedbackDone(b.dataset.uid,b.dataset.id))}async function markFeedbackDone(uid,id){const u=users.find(x=>x.uid===uid);if(!u)return;const next=arr(u.feedback).map(x=>x.id===id?{...x,status:'done'}:x);await updateDoc(doc(db,'users',uid),{feedback:next,updatedAt:serverTimestamp()});toast('הפנייה סומנה כטופלה')}
 
-// גרסה 82: כל מסמך הוא חשבון מייל, ובתוכו עד שלושה פרופילים נפרדים.
-function accountProfileStates(u){const entries=Object.entries(u.profiles||{}).filter(([,s])=>s&&s.profile);return entries.length?entries.map(([profileId,s])=>({uid:u.uid,email:u.email||'',displayName:u.displayName||'',lastSeenAt:u.lastSeenAt,lastActiveAt:u.lastActiveAt,currentScreen:u.currentScreen,currentScreenSince:u.currentScreenSince,online:u.online,profileId,state:s,fitness:s.fitness||{}})):[{...u,profileId:u.activeProfileId||'active'}]}
+
+// גרסה 88: חשבון מייל יכול להכיל עד שלושה פרופילים נפרדים.
+function accountProfileStates(u){
+  const entries=Object.entries(u.profiles||{}).filter(([,s])=>s&&s.profile);
+  return entries.length
+    ? entries.map(([profileId,s])=>({uid:u.uid,email:u.email||'',displayName:u.displayName||'',lastSeenAt:u.lastSeenAt,lastActiveAt:u.lastActiveAt,currentScreen:u.currentScreen,currentScreenSince:u.currentScreenSince,online:u.online,profileId,state:s,fitness:s.fitness||{}}))
+    : [{...u,profileId:u.activeProfileId||'active'}];
+}
 function everyProfile(){return users.flatMap(accountProfileStates)}
 function avatarAdmin(p){const a=profile(p).avatar||{};return a.type==='image'&&a.value?`<img src="${esc(a.value)}" alt="תמונת הפרופיל">`:esc(a.value||'🧑')}
-function profileGrade(p){const total=Number(state(p).journeyStepsLifetime)||0,levels=[0,8,18,32,50,72,98,128,162,200,242,288];let grade=1;for(let i=1;i<levels.length;i++)if(total>=levels[i])grade=i+1;return grade}
-filtered=function(){const term=$('#search').value.trim().toLowerCase(),ff=$('#fitnessFilter').value;return users.filter(u=>{const ps=accountProfileStates(u),text=`${u.email||''} ${u.displayName||''} ${ps.map(name).join(' ')}`.toLowerCase(),configured=ps.some(p=>!!fit(p).configured),attention=ps.some(needsAttention);return text.includes(term)&&(!ff||(ff==='configured'?configured:ff==='missing'?!configured:attention))})}
-renderUsers=function(){const accounts=filtered(),profileCount=accounts.reduce((n,u)=>n+accountProfileStates(u).length,0);$('#shownCount').textContent=`${accounts.length} חשבונות · ${profileCount} משתמשים`;$('#usersTable').innerHTML=accounts.length?accounts.map(u=>{const ps=accountProfileStates(u);return`<section class="account-card-v82"><div class="account-head-v82"><div><small>חשבון מייל</small><h3>${esc(u.email||'ללא אימייל')}</h3><small>${isOnline(u)?'<span class="online-dot"></span> מחובר עכשיו':`כניסה אחרונה: ${fmt(u.lastActiveAt||u.lastSeenAt)}`}</small></div><div class="actions"><button class="btn small secondary edit" data-id="${esc(u.uid)}">ניהול החשבון</button><button class="btn small danger del" data-id="${esc(u.uid)}">מחיקה</button></div></div><div class="profile-grid-v82">${ps.map(p=>`<article class="profile-admin-v82"><span class="admin-avatar-v82">${avatarAdmin(p)}</span><div><b>${esc(name(p))}</b><small>גיל: ${esc(profile(p).age||'—')} · דרגה ${profileGrade(p)}</small><small>${arr(profile(p).domains).includes('english')?'📖 אנגלית ':''}${arr(profile(p).domains).includes('fitness')?'💪 כושר':''}</small></div><div class="profile-stats-v82"><span>⭐ ${points(p)} נק׳</span><span>📚 ${known(p).length} מילים</span><span>🏃 ${logs(p).length} אימונים</span><span>${Number(state(p).game?.world||1)>=2?'🏜️ במדבר':'🌲 ביער'}</span></div></article>`).join('')}</div></section>`}).join(''):'<div class="empty">לא נמצאו חשבונות או משתמשים</div>';document.querySelectorAll('.edit').forEach(b=>b.onclick=()=>openEdit(users.find(u=>u.uid===b.dataset.id)));document.querySelectorAll('.del').forEach(b=>b.onclick=()=>removeUser(users.find(u=>u.uid===b.dataset.id)))}
+
+const gradeStartsV88=[0,8,18,32,50,72,98,128,162,200,242,288];
+function profileGrade(p){
+  const total=Number(state(p).journeyStepsLifetime)||0;
+  let grade=1;
+  for(let i=1;i<gradeStartsV88.length;i++)if(total>=gradeStartsV88[i])grade=i+1;
+  return grade;
+}
+function gradeOptionsV88(current){return gradeStartsV88.map((_,i)=>`<option value="${i+1}" ${i+1===current?'selected':''}>דרגה ${i+1}</option>`).join('')}
+
+async function setGradeV88(uid,profileId,target){
+  const account=users.find(u=>u.uid===uid);if(!account)return;
+  const hasProfiles=account.profiles&&profileId!=='active'&&account.profiles[profileId];
+  const source=hasProfiles?account.profiles[profileId]:state(account);
+  const current=profileGrade({state:source});
+  target=Math.max(1,Math.min(12,Number(target)||current));
+  if(target===current){toast(`המשתמש כבר בדרגה ${current}`);return}
+  const who=name({state:source});
+  if(!confirm(`לשנות את הדרגה של ${who} מדרגה ${current} לדרגה ${target}?`))return;
+
+  const next=structuredClone(source);
+  next.journeyStepsLifetime=gradeStartsV88[target-1];
+  // שמירה גם בשדות הוותיקים כדי שכל מסכי האפליקציה יציגו אותה דרגה באופן עקבי.
+  next.appLevel=target;
+  next.levelTasks=0;
+  next.game={...(next.game||{})};
+  next.manualGradeChangedAt=new Date().toISOString();
+  next.manualGradeChangedBy=auth.currentUser?.email||auth.currentUser?.uid||'admin';
+
+  if(target<5){
+    next.game.world=1;
+    next.desertUnlocked=false;
+    next.desertGateUnlocked=false;
+    next.desertTransitionCompletedV84=false;
+    next.gateVideoSeenV84=false;
+  }else{
+    next.desertUnlocked=true;
+    next.desertGateUnlocked=true;
+    // אם המשתמש עדיין לא ראה את מעבר היער→מדבר, נשאיר אותו ביער כדי שהמעבר יוצג כרגיל.
+    next.game.world=next.desertTransitionCompletedV84?2:1;
+  }
+  // העלאה ידנית תאפשר לאפליקציה להציג חגיגת עלייה אחת בכניסה הבאה; בהורדה לא תוצג חגיגה שגויה.
+  next.lastCelebratedJourneyLevel=target>current?Math.max(1,target-1):target;
+
+  const payload={updatedAt:serverTimestamp()};
+  if(hasProfiles){
+    const profiles=structuredClone(account.profiles);
+    profiles[profileId]=next;
+    payload.profiles=profiles;
+    if(account.activeProfileId===profileId){payload.state=next;payload.fitness=next.fitness||null}
+  }else{
+    payload.state=next;
+    payload.fitness=next.fitness||fit(account);
+  }
+  try{
+    await updateDoc(doc(db,'users',uid),payload);
+    toast(`הדרגה של ${who} שונתה ל־${target}`);
+  }catch(e){
+    console.error(e);
+    alert('לא ניתן לשנות את הדרגה. ודאו שלחשבון המנהל יש הרשאת כתיבה ב-Firestore.');
+  }
+}
+async function changeGradeV88(uid,profileId,delta){
+  const account=users.find(u=>u.uid===uid);if(!account)return;
+  const p=accountProfileStates(account).find(x=>(x.profileId||'active')===profileId);if(!p)return;
+  return setGradeV88(uid,profileId,profileGrade(p)+delta);
+}
+
+filtered=function(){
+  const term=$('#search').value.trim().toLowerCase(),ff=$('#fitnessFilter').value;
+  return users.filter(u=>{
+    const ps=accountProfileStates(u),text=`${u.email||''} ${u.displayName||''} ${ps.map(name).join(' ')}`.toLowerCase(),configured=ps.some(p=>!!fit(p).configured),attention=ps.some(needsAttention);
+    return text.includes(term)&&(!ff||(ff==='configured'?configured:ff==='missing'?!configured:attention));
+  })
+}
+
+renderUsers=function(){
+  const accounts=filtered(),profileCount=accounts.reduce((n,u)=>n+accountProfileStates(u).length,0);
+  $('#shownCount').textContent=`${accounts.length} חשבונות · ${profileCount} משתמשים`;
+  $('#usersTable').innerHTML=accounts.length?accounts.map(u=>{
+    const ps=accountProfileStates(u);
+    return`<section class="account-card-v82">
+      <div class="account-head-v82"><div><small>חשבון מייל</small><h3>${esc(u.email||'ללא אימייל')}</h3><small>${isOnline(u)?'<span class="online-dot"></span> מחובר עכשיו':`כניסה אחרונה: ${fmt(u.lastActiveAt||u.lastSeenAt)}`}</small></div><div class="actions"><button class="btn small secondary edit" data-id="${esc(u.uid)}">ניהול החשבון</button><button class="btn small danger del" data-id="${esc(u.uid)}">מחיקה</button></div></div>
+      <div class="profile-grid-v82">${ps.map(p=>{const grade=profileGrade(p),pid=esc(p.profileId||'active');return`<article class="profile-admin-v82">
+        <span class="admin-avatar-v82">${avatarAdmin(p)}</span>
+        <div><b>${esc(name(p))}</b><small>גיל: ${esc(profile(p).age||'—')} · דרגה ${grade}</small><small>${arr(profile(p).domains).includes('english')?'📖 אנגלית ':''}${arr(profile(p).domains).includes('fitness')?'💪 כושר':''}</small></div>
+        <div class="profile-stats-v82"><span>⭐ ${points(p)} נק׳</span><span>📚 ${known(p).length} מילים</span><span>🏃 ${logs(p).length} אימונים</span><span>${Number(state(p).game?.world||1)>=2?'🏜️ במדבר':'🌲 ביער'}</span></div>
+        <div class="grade-controls-v88">
+          <div class="grade-label-v88"><small>ניהול דרגה</small><b>דרגה ${grade}</b></div>
+          <button class="btn small danger grade-down-v88" type="button" data-uid="${esc(u.uid)}" data-profile="${pid}" title="הורדת דרגה" ${grade<=1?'disabled':''}>− הורד</button>
+          <select class="grade-select-v88" data-uid="${esc(u.uid)}" data-profile="${pid}" aria-label="בחירת דרגה">${gradeOptionsV88(grade)}</select>
+          <button class="btn small success grade-up-v88" type="button" data-uid="${esc(u.uid)}" data-profile="${pid}" title="העלאת דרגה" ${grade>=12?'disabled':''}>העלה +</button>
+        </div>
+      </article>`}).join('')}</div>
+    </section>`
+  }).join(''):'<div class="empty">לא נמצאו חשבונות או משתמשים</div>';
+  document.querySelectorAll('.edit').forEach(b=>b.onclick=()=>openEdit(users.find(u=>u.uid===b.dataset.id)));
+  document.querySelectorAll('.del').forEach(b=>b.onclick=()=>removeUser(users.find(u=>u.uid===b.dataset.id)));
+  document.querySelectorAll('.grade-down-v88').forEach(b=>b.onclick=()=>changeGradeV88(b.dataset.uid,b.dataset.profile,-1));
+  document.querySelectorAll('.grade-up-v88').forEach(b=>b.onclick=()=>changeGradeV88(b.dataset.uid,b.dataset.profile,1));
+  document.querySelectorAll('.grade-select-v88').forEach(s=>s.onchange=()=>setGradeV88(s.dataset.uid,s.dataset.profile,Number(s.value)));
+}
+
 renderRanking=function(){const top=everyProfile().sort((a,b)=>points(b)-points(a)).slice(0,10);$('#ranking').innerHTML=top.length?top.map((u,i)=>`<div class="rank"><b>${i+1}</b><span><strong>${esc(name(u))}</strong><br><small>${esc(u.email||'')}</small></span><b>${points(u)} נק׳</b></div>`).join(''):'<div class="empty">אין עדיין נתוני דירוג</div>'}
-render=function(){const now=new Date(),week=new Date(now);week.setDate(now.getDate()-7);const ps=everyProfile();$('#usersCount').textContent=users.length;$('#profilesCount').textContent=ps.length;$('#activeToday').textContent=users.filter(u=>sameDay(dateOf(u.lastSeenAt),now)).length;$('#onlineNow').textContent=users.filter(isOnline).length;$('#workoutsToday').textContent=ps.reduce((n,u)=>n+todayWorkoutCount(u),0);$('#wordsToday').textContent=ps.reduce((n,u)=>n+todayWordsCount(u),0);$('#newWeek').textContent=users.filter(u=>dateOf(u.createdAt||u.registeredAt||u.updatedAt)>=week).length;$('#attentionCount').textContent=ps.filter(needsAttention).length;$('#desertCount').textContent=ps.filter(p=>Number(state(p).game?.world||1)>=2).length;$('#inactiveWeek').textContent=users.filter(u=>{const d=dateOf(u.lastActiveAt||u.lastSeenAt);return!d||d<week}).length;$('#noStudyWeek').textContent=ps.filter(p=>known(p).length===0&&logs(p).length===0).length;$('#missingFitnessV82').textContent=ps.filter(p=>arr(profile(p).domains).includes('fitness')&&!fit(p).configured).length;$('#newFeedbackV82').textContent=allFeedback().filter(f=>f.status==='new').length;renderChart();renderRanking();renderFeedback();renderUsers()}
+
+render=function(){
+  const now=new Date(),week=new Date(now);week.setDate(now.getDate()-7);const ps=everyProfile();
+  $('#usersCount').textContent=users.length;
+  $('#profilesCount').textContent=ps.length;
+  $('#activeToday').textContent=users.filter(u=>sameDay(dateOf(u.lastSeenAt),now)).length;
+  $('#onlineNow').textContent=users.filter(isOnline).length;
+  $('#workoutsToday').textContent=ps.reduce((n,u)=>n+todayWorkoutCount(u),0);
+  $('#wordsToday').textContent=ps.reduce((n,u)=>n+todayWordsCount(u),0);
+  $('#newWeek').textContent=users.filter(u=>dateOf(u.createdAt||u.registeredAt||u.updatedAt)>=week).length;
+  $('#attentionCount').textContent=ps.filter(needsAttention).length;
+  $('#desertCount').textContent=ps.filter(p=>Number(state(p).game?.world||1)>=2||profileGrade(p)>=5).length;
+  $('#inactiveWeek').textContent=users.filter(u=>{const d=dateOf(u.lastActiveAt||u.lastSeenAt);return!d||d<week}).length;
+  $('#noStudyWeek').textContent=ps.filter(p=>known(p).length===0&&logs(p).length===0).length;
+  $('#missingFitnessV82').textContent=ps.filter(p=>arr(profile(p).domains).includes('fitness')&&!fit(p).configured).length;
+  $('#newFeedbackV82').textContent=allFeedback().filter(f=>f.status==='new').length;
+  renderChart();renderRanking();renderFeedback();renderUsers();
+}

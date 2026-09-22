@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="icon" type="image/png" href="icon-192.png" />
-  <title>מתקדמים – היער והמדבר · גרסה 86</title>
+  <title>מתקדמים – היער והמדבר · גרסה 91</title>
   <style>
     :root{--ink:#182238;--muted:#697386;--purple:#6558e8;--purple2:#8276f5;--mint:#35c79a;--yellow:#ffca55;--red:#f16e78;--bg:#f5f6fb;--card:#fff;--line:#e8e9f2;--shadow:0 14px 40px rgba(42,46,94,.10)}
     *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans Hebrew",sans-serif} button,input,select{font:inherit} button{cursor:pointer}
@@ -121,6 +121,23 @@ body.world-forest #home .hub-hero:before,body.world-desert #home .hub-hero:befor
 @media(max-width:780px){body.world-forest,body.world-desert{background-attachment:scroll}.world-journey-banner{min-height:150px}.mission-head h2{font-size:24px}.mission-score{width:60px;height:60px}}
 
 </style>
+<style id="v87-mobile-map-login">
+#cloudEmailNext{width:100%;margin-top:9px}.cloud-auth #cloudPassword.hidden,.cloud-auth .cloud-row.hidden{display:none!important}
+@media(max-width:780px){
+  .forest-journey-card{min-height:0!important;aspect-ratio:850/1844;background-image:linear-gradient(180deg,rgba(3,34,18,.18),transparent 28%,rgba(2,29,15,.08)),url('assets/v87/forest-map-mobile.png')!important;background-size:100% 100%!important;background-position:center!important}
+  .forest-journey-title{width:86%!important;padding:10px 12px!important}.forest-journey-title h2{font-size:20px!important}.forest-journey-content{padding:12px!important}.journey-level{top:118px!important;right:10px!important}
+  .forest-station.s1{left:48%!important;top:85.4%!important}.forest-station.s2{left:68.5%!important;top:69%!important}.forest-station.s3{left:47.5%!important;top:54.4%!important}.forest-station.s4{left:36.5%!important;top:27.5%!important}.forest-station.s5{left:6.5%!important;top:9.6%!important}
+  .journey-ori.stage-0{left:53%!important;top:81.5%!important}.journey-ori.stage-1{left:73%!important;top:65%!important}.journey-ori.stage-2{left:52%!important;top:50.5%!important}.journey-ori.stage-3{left:42%!important;top:23.5%!important}.journey-ori.stage-4{left:11%!important;top:5.7%!important}
+  .journey-dashed-path{display:none!important}.forest-station:after{font-size:9px!important;width:61px!important}.forest-route:after{display:none!important}
+}
+</style>
+<script id="v87-polish">
+(function(){
+  function polish(){const mark=document.querySelector('.version-mark');if(mark)mark.textContent='גרסה 87 · ניהול דרגות ומשחקים';}
+  const base=window.renderAll;window.renderAll=function(){const out=base?.apply(this,arguments);setTimeout(polish);return out};
+  addEventListener('DOMContentLoaded',polish);
+})();
+</script>
 
 <style id="v50-entry-fitness-fixes">
 /* גרסה 50 — עיצוב מסלולים ושמירת שאלון הכושר */
@@ -307,6 +324,7 @@ body.world-forest #home .hub-hero:before,body.world-desert #home .hub-hero:befor
 
 <style id="cloud-auth-style">
 .cloud-auth{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#f3f1ff,#e9faf4);display:grid;place-items:center;padding:20px;font-family:Arial,sans-serif}.cloud-auth.hidden{display:none}.cloud-auth-card{width:min(460px,100%);background:#fff;border:1px solid #e4e6ef;border-radius:28px;padding:28px;box-shadow:0 28px 75px #28304a28;text-align:right}.cloud-auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}.cloud-auth-logo span{font-size:42px}.cloud-auth h1{margin:0;font-size:28px}.cloud-auth p{color:#687187;line-height:1.55}.cloud-auth input{width:100%;padding:13px 14px;border:1px solid #dfe3ec;border-radius:13px;margin:6px 0;font-size:16px}.cloud-auth button{width:100%;border:0;border-radius:13px;padding:13px;font-weight:900;font-size:15px;margin-top:9px;cursor:pointer}.cloud-google{background:#fff;color:#253047;border:1px solid #dfe3ec!important}.cloud-primary{background:#6258df;color:#fff}.cloud-secondary{background:#ece9ff;color:#554ccc}.cloud-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.cloud-sep{text-align:center;color:#9298a8;margin:14px 0;position:relative}.cloud-sep:before,.cloud-sep:after{content:"";position:absolute;top:50%;width:42%;height:1px;background:#e4e6ec}.cloud-sep:before{right:0}.cloud-sep:after{left:0}.cloud-status{min-height:22px;color:#b23b3b;font-weight:700;font-size:13px;margin-top:10px}.cloud-user-chip{position:fixed;left:14px;bottom:14px;z-index:9000;background:#fff;border:1px solid #e2e5ee;border-radius:999px;padding:8px 12px;box-shadow:0 7px 22px #2530471f;font-size:12px;font-weight:800;display:none}.cloud-user-chip.show{display:flex;align-items:center;gap:7px}.cloud-user-chip button{border:0;background:#f0edff;color:#554ccc;border-radius:999px;padding:6px 9px;font-weight:800;cursor:pointer}@media(max-width:600px){.cloud-auth-card{padding:21px}.cloud-row{grid-template-columns:1fr}}
+.cloud-auth:not(.hidden){pointer-events:auto!important}.cloud-auth:not(.hidden) .cloud-auth-card,.cloud-auth:not(.hidden) button,.cloud-auth:not(.hidden) input{pointer-events:auto!important}
 </style>
 
 <style id="v683Styles">
@@ -411,11 +429,18 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 <div id="cloudAuth" class="cloud-auth hidden" dir="rtl">
   <div class="cloud-auth-card">
     <div class="cloud-auth-logo"><span>🚀</span><div><h1>ברוכים הבאים למתקדמים</h1><small>ההתקדמות נשמרת בענן</small></div></div>
-    <button id="cloudGoogle" class="cloud-google">המשך עם Google</button>
-    <div class="cloud-sep">או</div>
-    <input id="cloudEmail" type="email" autocomplete="email" placeholder="כתובת אימייל">
-    <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="סיסמה (לפחות 6 תווים)">
-    <div class="cloud-row"><button id="cloudLogin" class="cloud-primary">כניסה</button><button id="cloudRegister" class="cloud-secondary">הרשמה</button></div>
+    <button id="cloudGoogle" class="cloud-google">כניסה עם Google</button>
+    <div id="cloudConsent" class="cloud-consent hidden">
+      <h2>האם הינך מסכים להנחיות?</h2>
+      <ul>
+        <li>משתמשים באפליקציה בהתאם לגיל ובאישור הורה או מבוגר אחראי.</li>
+        <li>באימוני הכושר מתחילים בהדרגה ועוצרים אם מופיעים כאב או תחושה לא טובה.</li>
+        <li>האפליקציה מיועדת ללימוד ולעידוד פעילות ואינה מחליפה ייעוץ רפואי.</li>
+        <li>ההתקדמות נשמרת בחשבון Google המחובר.</li>
+      </ul>
+      <button id="cloudConsentAgree" class="cloud-primary" type="button">אני מסכים וממשיך</button>
+      <button id="cloudConsentDisagree" class="cloud-secondary" type="button">אינני מסכים</button>
+    </div>
     <div id="cloudAuthStatus" class="cloud-status"></div>
     <small>במחשב פרטי הנתונים נשמרים גם מקומית כגיבוי. בשבת האפליקציה ממשיכה לפעול לפי ההגדרות הקיימות.</small>
   </div>
@@ -461,7 +486,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
         <div class="card"><h3>🔔 תזכורות</h3><p>אפשר לקבל תזכורת כאשר האפליקציה פתוחה בדפדפן.</p><label class="pill" style="display:flex;justify-content:space-between;align-items:center"><span>הפעלת תזכורת</span><input type="checkbox" id="settingsReminder"></label><small id="notificationStatus"></small></div>
         <div class="card"><h3>🧭 המסלולים שלי</h3><p>אפשר להוסיף או להסיר אנגלית וכושר גם לאחר ההרשמה.</p><label class="domain-setting"><span>🇬🇧 לימוד אנגלית</span><input type="checkbox" id="domainEnglish"></label><label class="domain-setting"><span>💪 כושר והתחזקות</span><input type="checkbox" id="domainFitness"></label><button class="btn secondary wide" style="margin-top:14px" onclick="saveDomainSettings()">שמירת המסלולים</button><small id="domainSettingsNote"></small></div>
         <div class="card"><h3>🎯 התאמת המסלול</h3><p>אפשר לבצע שוב את מבחן הפתיחה ולשנות את נקודת ההתחלה.</p><button class="btn secondary wide" onclick="restartPlacement();showScreen('englishHome')">מבחן רמה מחדש</button></div>
-        <div class="card"><h3>👥 משתמשים במכשיר</h3><p>לכל משתמש נשמרים מסלול, נקודות ומילים נפרדים.</p><button class="btn secondary wide" onclick="openUsers()">החלפת משתמש או הוספת משתמש</button></div>
+        <div class="card"><h3>👥 פרופילים בחשבון</h3><p>בכל חשבון אפשר ליצור עד 3 פרופילים, ולכל פרופיל נשמרים מסלול, נקודות ומילים בנפרד.</p><button class="btn secondary wide" onclick="openUsers()">בחירת פרופיל או הוספת פרופיל</button></div>
         <div class="card"><h3>💾 גיבוי והעברה</h3><p>מורידים קובץ שמכיל את כל הפרופילים וההתקדמות, ואפשר לשחזר אותו במכשיר אחר.</p><button class="btn secondary wide" onclick="exportBackup()">הורדת גיבוי</button><button class="btn secondary wide" style="margin-top:10px" onclick="document.getElementById('backupFile').click()">שחזור מגיבוי</button><input id="backupFile" type="file" accept="application/json,.json" class="hidden" onchange="importBackup(event)"></div>
         <div class="card"><h3>📲 התקנת האפליקציה</h3><p id="installText">בדיקת אפשרות ההתקנה...</p><button class="btn wide" id="installBtn" onclick="installApp()">התקנת מתקדמים</button></div>
         <div class="card" style="border-color:#f3c6ca"><h3>↻ התחלה מחדש</h3><p>מחיקת הנקודות, המילים וההתקדמות מהמכשיר הזה.</p><button class="btn wide" style="background:var(--red)" onclick="resetApp()">איפוס המסלול</button></div>
@@ -469,7 +494,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     </main></div>
   </div></div><div id="toast" class="toast hidden"></div><div id="fitnessCoach" class="coach-pop hidden"></div>
   <div id="avatarModal" class="modal-bg hidden"><div class="modal"><div class="modal-head"><h2>בחירת תמונת פרופיל</h2><button class="close" id="closeAvatar">×</button></div><p>בחרו אחד משמונה פרופילים או העלו תמונה מהמכשיר.</p><div id="profileAvatars"></div></div></div>
-  <div id="usersModal" class="modal-bg hidden"><div class="modal"><div class="modal-head"><h2>בחירת משתמש</h2><button class="close" onclick="closeUsers()">×</button></div><p>ההתקדמות של כל משתמש נשמרת בנפרד במכשיר.</p><div id="usersList"></div><button class="btn wide" style="margin-top:15px" onclick="addUser()">＋ הוספת משתמש חדש</button></div></div>
+  <div id="usersModal" class="modal-bg hidden"><div class="modal"><div class="modal-head"><h2>בחירת פרופיל</h2><button class="close" onclick="closeUsers()">×</button></div><p>בכל חשבון אפשר ליצור עד 3 פרופילים. לכל פרופיל נשמרים בנפרד ההתקדמות, הנקודות, האנגלית והכושר.</p><div id="profilesCount" class="profile-limit-note">פרופילים בחשבון: 1 מתוך 3</div><div id="usersList"></div><button class="btn wide" style="margin-top:15px" onclick="addUser()">＋ הוספת פרופיל חדש</button></div></div>
   <div id="placementModal" class="modal-bg hidden"><div class="modal" id="placementContent"></div></div>
 
   <div id="feedbackModal" class="modal-bg hidden"><div class="modal"><div class="modal-head"><h2>💬 משוב או שאלה</h2><button class="close" onclick="closeFeedbackModal()">×</button></div><p>אפשר לשלוח שאלה, רעיון או דיווח על תקלה. ההודעה תגיע ישירות לחדר הבקרה.</p><div class="field"><label>סוג הפנייה</label><select id="feedbackType"><option value="question">שאלה</option><option value="feedback">משוב</option><option value="bug">דיווח על תקלה</option><option value="idea">רעיון</option></select></div><div class="field"><label>הודעה</label><textarea id="feedbackBody" rows="5" maxlength="1200" placeholder="כתבו כאן..."></textarea></div><button id="feedbackSendBtn" class="btn wide" onclick="sendFeedbackToAdmin()">שליחה לחדר הבקרה</button><div id="feedbackStatus" style="margin-top:10px;font-weight:800"></div></div></div>
@@ -648,13 +673,22 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     function initShabbat(){let fresh=state.shabbat&&state.shabbat.source==='תל־אביב'&&new Date(state.shabbat.havdalah).getTime()>Date.now()-864e5;if(fresh)return renderAll();state.shabbat=null;fetchShabbat()}
     function auditEnglishContent(){let bank=[...words,...allFoundationWords()],seen=new Set(),issues=[];bank.forEach((item,index)=>{let w=normalizeEnglishWord(item?.w);if(!validWordRecord(item))issues.push({index,word:item?.w,reason:'רשומה לא תקינה'});if(seen.has(w))issues.push({index,word:w,reason:'כפילות'});seen.add(w)});window.MITKADMIM_ENGLISH_QA={checked:bank.length,issues};if(issues.length)console.warn('English content QA:',issues);else console.info(`English content QA passed: ${bank.length} records`)}
     setTimeout(auditEnglishContent,0);
-    function checkDay(){if(!state.lastOpen){state.lastOpen=today();save();return}if(state.lastOpen!==today()){state.day++;state.completed={letters:!!(state.placement&&state.placement.stage>0),words:false,quiz:false};state.learnIndex=0;state.history.push(0);state.history=state.history.slice(-7);state.lastOpen=today();save()}}
+    function syncEnglishCompletionForToday(){
+      state.completed=Object.assign({letters:false,words:false,quiz:false},state.completed||{});
+      state.englishCompletedOn=state.englishCompletedOn||{};
+      const date=today();
+      state.completed.letters=state.englishCompletedOn.letters===date;
+      state.completed.words=state.englishCompletedOn.words===date;
+      state.completed.quiz=state.englishCompletedOn.quiz===date||(state.lastQuiz&&state.lastQuiz.date===date);
+    }
+    function markEnglishCompleteToday(type){state.englishCompletedOn=state.englishCompletedOn||{};state.englishCompletedOn[type]=today();state.completed=state.completed||{};state.completed[type]=true}
+    function checkDay(){if(!state.lastOpen){state.lastOpen=today();syncEnglishCompletionForToday();persistState();return}if(state.lastOpen!==today()){state.day++;state.completed={letters:false,words:false,quiz:false};state.learnIndex=0;state.history.push(0);state.history=state.history.slice(-7);state.lastOpen=today()}syncEnglishCompletionForToday();persistState()}
     function addPoints(n){n=Number(n)||0;state.points+=n;state.totalPointsEarned=(Number(state.totalPointsEarned)||0)+Math.max(0,n);state.history[state.history.length-1]=(state.history.at(-1)||0)+n;state.dailyPoints=state.dailyPoints||{};state.dailyPoints[today()]=(state.dailyPoints[today()]||0)+n}
     function award(n,msg){addPoints(Number(n)||0);persistState();const pointsEl=$('#points');if(pointsEl)pointsEl.textContent=state.points;renderAppLevel();toast(msg||`כל הכבוד! קיבלת ${n} נקודות ⭐`)}
     function awardOnceToday(key,n,msg){state.dailyRewards=state.dailyRewards||{};let token=today()+':'+key;if(state.dailyRewards[token])return false;state.dailyRewards[token]=n;award(n,msg);return true}
     function levelNeed(level){return 3+level*2}
     function recordLevelTask(){state.appLevel=Math.max(1,Number(state.appLevel)||1);state.levelTasks=Math.max(0,Number(state.levelTasks)||0);state.levelTasks++;let leveled=false;while(state.levelTasks>=levelNeed(state.appLevel)){state.levelTasks-=levelNeed(state.appLevel);state.appLevel++;leveled=true}if(leveled)setTimeout(()=>toast(`עלית לרמה ${state.appLevel}! כל הכבוד 🎉`),250)}
-    function complete(type,n){if(!state.completed[type]){state.completed[type]=true;award(n);recordLevelTask();progressWeeklyTask();state.lastStudy=today();if(typeof window.markDailyRequirement==='function')window.markDailyRequirement(type);save()}}
+    function complete(type,n){syncEnglishCompletionForToday();if(!state.completed[type]){markEnglishCompleteToday(type);award(n);recordLevelTask();progressWeeklyTask();state.lastStudy=today();if(typeof window.markDailyRequirement==='function')window.markDailyRequirement(type);save()}}
     function courseIndex(){return Math.min(coursePlan.length-1,Math.max(0,state.day-1))}
     function curriculumDay(){return coursePlan[lessonDayOverride===null?courseIndex():Math.min(coursePlan.length-1,lessonDayOverride)]}
     function dailyWordCount(){return [2,5,10,10,12][(state.placement&&state.placement.stage)||0]||12}
@@ -781,10 +815,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     function renderLesson(){let list=lessonItems(), item=list[state.learnIndex]||list[0];$('#lessonCount').textContent=`${state.learnIndex+1} מתוך ${list.length}`;$('#learnContent').innerHTML=`<div class="learn-wrap"><div class="card flash">${item.letter?`<div class="letter">${item.w}</div>`:`<div style="font-size:55px">${item.emoji}</div><div class="word">${item.w}</div>`}<div class="meaning">${item.h}</div><div class="example">${item.e}</div><button class="speaker" onclick="speak('${item.w}')">🔊</button><div class="controls"><button class="btn secondary" onclick="moveLesson(-1)" ${state.learnIndex===0?'disabled':''}>הקודם</button><button class="btn" onclick="moveLesson(1)">${state.learnIndex===list.length-1?'סיימתי':'הבא'}</button></div></div><div class="card"><h3>איך לומדים?</h3><p>1. מביטים במילה או באות.</p><p>2. לוחצים על הרמקול ומקשיבים.</p><p>3. אומרים בקול שלוש פעמים.</p><p>4. מנסים לזכור בלי להסתכל בתרגום.</p><div class="badge">טיפ: לימוד בקול מחזק את הזיכרון</div></div></div>`}
     function moveLesson(n){let list=lessonItems();if(n<0){state.learnIndex--;renderLesson();return}if(state.learnIndex<list.length-1){state.learnIndex++;renderLesson()}else if(state.lessonType==='words'){startPractice()}else{complete('letters',10);save();toast('שיעור האותיות הושלם! 🎉');showScreen('englishHome')}}
     function optionPool(target,count=4){let pool=[...words,...allFoundationWords()].filter((x,i,a)=>a.findIndex(y=>y.w===x.w)===i),out=[target];while(out.length<count){let x=pool[Math.floor(Math.random()*pool.length)];if(!out.some(y=>y.w===x.w))out.push(x)}return out.sort(()=>Math.random()-.5)}
-    function normalizeEnglishWord(value){return String(value||'').trim().toLowerCase().replace(/[^a-z'-]/g,'')}
+    function normalizeEnglishWord(value){return String(value||'').trim().toLowerCase().replace(/[^a-z' -]/g,'').replace(/\s+/g,' ')}
     function safeShuffle(list){let out=[...list];for(let i=out.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
-    function validWordRecord(item){let w=normalizeEnglishWord(item?.w);return !!(item&&w&&w===String(item.w).trim().toLowerCase()&&item.h&&item.emoji&&/^[a-z'-]+$/.test(w))}
-    function makeBuildTiles(target){let word=normalizeEnglishWord(target?.w);if(!word)return[];let tiles=safeShuffle([...word].map((c,j)=>({c,j})));let rebuilt=tiles.map(x=>x.c).sort().join(''),expected=[...word].sort().join('');return rebuilt===expected&&tiles.length===word.length?tiles:[]}
+    function validWordRecord(item){let w=normalizeEnglishWord(item?.w);return !!(item&&w&&w===String(item.w).trim().toLowerCase().replace(/\s+/g,' ')&&item.h&&item.emoji&&/^[a-z]+(?:[ '-][a-z]+)*$/.test(w))}
+    function makeBuildTiles(target){let word=normalizeEnglishWord(target?.w);if(!word||word.includes(' '))return[];let tiles=safeShuffle([...word].map((c,j)=>({c,j})));let rebuilt=tiles.map(x=>x.c).sort().join(''),expected=[...word].sort().join('');return rebuilt===expected&&tiles.length===word.length?tiles:[]}
     function startPractice(){let learned=learningWords().filter(validWordRecord);if(!learned.length){toast('לא נמצאו מילים תקינות לתרגול. עברו לשיעור הבא.');showScreen('englishHome');return}let types=['image','listen','build','sentence'],total=Math.max(4,learned.length);practice=Array.from({length:total},(_,i)=>{let type=types[i%4],target=learned[i%learned.length],tiles=type==='build'?makeBuildTiles(target):[];if(type==='build'&&tiles.length!==normalizeEnglishWord(target.w).length)type='image';return{type,target,options:optionPool(target),tiles,used:[]}}).filter(q=>q&&validWordRecord(q.target));practiceIndex=0;practiceRight=0;builtWord='';practiceLocked=false;renderPractice()}
     function renderPractice(){let q=practice[practiceIndex];if(!q)return finishPractice();if(!validWordRecord(q.target)){practice.splice(practiceIndex,1);return renderPractice()}practiceLocked=false;$('#lessonCount').textContent=`תרגול ${practiceIndex+1} מתוך ${practice.length}`;let steps=`<div class="practice-step">${practice.map((_,i)=>`<i class="${i<practiceIndex?'done':i===practiceIndex?'now':''}"></i>`).join('')}</div>`,body='';if(q.type==='image')body=`<span class="badge">התאמת מילה לתמונה</span><h2>איזו תמונה מתאימה למילה?</h2><div class="quiz-word">${q.target.w}</div><div class="answers">${q.options.map(x=>`<button class="answer practice-emoji" onclick="answerPractice('${x.w}')">${x.emoji}<small style="display:block;font-size:13px">${x.h}</small></button>`).join('')}</div>`;if(q.type==='listen')body=`<span class="badge">זיהוי לפי שמיעה</span><h2>לחצו על הרמקול ובחרו מה שמעתם</h2><button class="speaker" style="width:75px;height:75px;font-size:32px" onclick="speak('${q.target.w}')">🔊</button><div class="answers">${q.options.map(x=>`<button class="answer" style="direction:ltr" onclick="answerPractice('${x.w}')">${x.w}</button>`).join('')}</div>`;if(q.type==='build'){let word=normalizeEnglishWord(q.target.w),slots=[...word].map((_,i)=>`<span style="display:inline-grid;place-items:center;width:34px;height:42px;border-bottom:3px solid #dfe1ea;margin:0 3px;font-weight:900;color:var(--purple)">${builtWord[i]||''}</span>`).join('');body=`<span class="badge">בניית מילה</span><h2>סדרו את כל האותיות לפי התמונה</h2><div class="practice-emoji">${q.target.emoji}</div><div dir="ltr" style="margin:18px 0">${slots}</div><div class="letter-bank">${q.tiles.map((x,i)=>`<button class="letter-tile" ${q.used.includes(i)?'disabled':''} onclick="pickLetter(${i})" aria-label="האות ${x.c}">${x.c}</button>`).join('')}</div><small style="display:block;color:var(--muted);margin-bottom:12px">${word.length} אותיות — כל אות מופיעה בדיוק פעם אחת</small><button class="btn secondary" onclick="resetBuild()">התחלה מחדש</button>`}if(q.type==='sentence'){let sentence=q.target.e.replace(new RegExp(q.target.w,'i'),'___');body=`<span class="badge">השלמת משפט</span><h2>איזו מילה חסרה?</h2><div class="quiz-word" style="font-size:32px">${sentence}</div><div class="answers">${q.options.map(x=>`<button class="answer" style="direction:ltr" onclick="answerPractice('${x.w}')">${x.w}</button>`).join('')}</div>`}$('#learnContent').innerHTML=`<div class="card quiz-box">${steps}${body}</div>`;if(q.type==='listen')setTimeout(()=>speak(q.target.w),300)}
     function pickLetter(i){let q=practice[practiceIndex];if(!q||q.type!=='build'||q.used.includes(i)||!q.tiles[i])return;let expected=normalizeEnglishWord(q.target.w);if(q.tiles.length!==expected.length){toast('השאלה הוחלפה בגלל בדיקת איכות');practice.splice(practiceIndex,1);builtWord='';return renderPractice()}q.used.push(i);builtWord+=q.tiles[i].c;let answer=builtWord;renderPractice();if(q.used.length===q.tiles.length)setTimeout(()=>answerPractice(answer),250)}
@@ -796,7 +830,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       let earned=0;
       if(state.makeup&&state.makeup.active){state.makeup.active=false;state.makeup.done=true;if(awardOnceToday('makeup-words',15,'השלמת את יחידת השבת וקיבלת 15 נקודות ⭐'))earned=15;lessonDayOverride=null}
       else if(awardOnceToday('words',20,'השיעור והתרגול הושלמו — קיבלת 20 נקודות ⭐'))earned=20;
-      state.completed.words=true;state.lastStudy=today();recordLevelTask();progressWeeklyTask();checkAchievements();save();
+      markEnglishCompleteToday('words');state.lastStudy=today();recordLevelTask();progressWeeklyTask();checkAchievements();save();
       toast(earned?`נוספו ${earned} נקודות לחשבון ⭐`:'הנקודות של השיעור כבר התקבלו היום ✓');
       showScreen('englishHome')
     }
@@ -813,7 +847,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       let reward=Math.round(maxReward*(.70+.30*(pct/100)));
       state.lastQuiz={date:today(),score:pct,right:qRight,total:quiz.length,weekly,monthly,reward};
       state.quizHistory=state.quizHistory||[];state.quizHistory.push(state.lastQuiz);state.quizHistory=state.quizHistory.slice(-60);
-      state.completed.quiz=true;state.lastStudy=today();
+      markEnglishCompleteToday('quiz');state.lastStudy=today();
       let got=awardOnceToday('quiz',reward,`קיבלת ${reward} נקודות על המבחן ⭐`);
       recordLevelTask();progressWeeklyTask();
       if(pct===100){state.nextDayReview=[]}else{state.nextDayReview=(state.nextDayReview||[]).filter((w,i,a)=>a.indexOf(w)===i)}
@@ -846,9 +880,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     function openUsers(){persistState();renderUsers();$('#usersModal').classList.remove('hidden')}
     function closeUsers(){$('#usersModal').classList.add('hidden')}
     function accountUserEntries(){let uid=state.cloudUser?.uid;if(!uid)return Object.entries(userStore).filter(([,u])=>u.profile);let prefix=`firebase:${uid}:profile:`;return Object.entries(userStore).filter(([id,u])=>id.startsWith(prefix)&&u.profile).slice(0,3)}
-    function renderUsers(){let users=accountUserEntries();$('#usersList').innerHTML=users.length?users.map(([id,u])=>`<button class="choice ${id===activeUserId?'selected':''}" style="width:100%;display:flex;align-items:center;gap:12px;text-align:right;margin:8px 0" onclick="switchUser('${id}')"><span class="user-avatar">${avatarHTML(u.profile.avatar)}</span><span><b>${u.profile.name}</b><small style="display:block">דרגה ${u.appLevel||1} · ${u.points||0} נקודות זמינות · ${u.totalPointsEarned||u.points||0} נצברו ${id===activeUserId?'· המשתמש הנוכחי':''}</small></span></button>`).join(''):'<p class="empty">עדיין אין משתמשים שמורים.</p>';let add=$('#usersModal .btn.wide');if(add){add.disabled=users.length>=3;add.textContent=users.length>=3?'הגעתם למגבלה של 3 משתמשים':'＋ הוספת משתמש חדש'}}
+    function renderUsers(){let users=accountUserEntries(),count=users.length;let countBox=$('#profilesCount');if(countBox)countBox.textContent=`פרופילים בחשבון: ${count} מתוך 3`;$('#usersList').innerHTML=count?users.map(([id,u])=>`<button class="choice ${id===activeUserId?'selected':''}" style="width:100%;display:flex;align-items:center;gap:12px;text-align:right;margin:8px 0" onclick="switchUser('${id}')"><span class="user-avatar">${avatarHTML(u.profile.avatar)}</span><span><b>${u.profile.name}</b><small style="display:block">דרגה ${u.appLevel||1} · ${u.points||0} נקודות זמינות · ${u.totalPointsEarned||u.points||0} נצברו ${id===activeUserId?'· הפרופיל הנוכחי':''}</small></span></button>`).join(''):'<p class="empty">עדיין אין פרופילים שמורים בחשבון.</p>';let add=$('#usersModal .btn.wide');if(add){add.disabled=count>=3;add.textContent=count>=3?'הגעתם למגבלה של 3 פרופילים':'＋ הוספת פרופיל חדש'}}
     function switchUser(id){if(!userStore[id]||id===activeUserId)return closeUsers();persistState();activeUserId=id;localStorage.setItem('mamriimActiveUser',id);localStorage.setItem('mamriimState',JSON.stringify(userStore[id]));location.reload()}
-    function addUser(){persistState();let uid=state.cloudUser?.uid,users=accountUserEntries();if(uid&&users.length>=3)return toast('בכל חשבון מייל אפשר ליצור עד 3 משתמשים');let id=uid?`firebase:${uid}:profile:${Date.now()}`:'user-'+Date.now(),fresh=JSON.parse(JSON.stringify(defaults));if(uid)fresh.cloudUser=JSON.parse(JSON.stringify(state.cloudUser));userStore[id]=fresh;localStorage.setItem('mamriimUsers',JSON.stringify(userStore));localStorage.setItem('mamriimActiveUser',id);if(uid)localStorage.setItem(`mitkadmimCloudActive:${uid}`,id);localStorage.setItem('mamriimState',JSON.stringify(fresh));location.reload()}
+    function addUser(){persistState();let uid=state.cloudUser?.uid,users=accountUserEntries();if(users.length>=3)return toast('בכל חשבון אפשר ליצור עד 3 פרופילים');let id=uid?`firebase:${uid}:profile:${Date.now()}`:'user-'+Date.now(),fresh=JSON.parse(JSON.stringify(defaults));if(uid)fresh.cloudUser=JSON.parse(JSON.stringify(state.cloudUser));userStore[id]=fresh;localStorage.setItem('mamriimUsers',JSON.stringify(userStore));localStorage.setItem('mamriimActiveUser',id);if(uid)localStorage.setItem(`mitkadmimCloudActive:${uid}`,id);localStorage.setItem('mamriimState',JSON.stringify(fresh));location.reload()}
     function exportBackup(){persistState();let data={app:'mamriim',version:27,exportedAt:new Date().toISOString(),activeUserId,users:userStore},blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`mamriim-backup-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('קובץ הגיבוי הורד למכשיר 💾')}
     function importBackup(event){let file=event.target.files?.[0];event.target.value='';if(!file)return;let reader=new FileReader();reader.onload=()=>{try{let data=JSON.parse(reader.result);if(data.app!=='mamriim'||!data.users||typeof data.users!=='object')throw Error('invalid');let count=Object.values(data.users).filter(x=>x&&x.profile).length;if(!count)throw Error('empty');if(!confirm(`נמצאו ${count} פרופילים בגיבוי. השחזור יחליף את הפרופילים שבמכשיר הזה. להמשיך?`))return;userStore=data.users;activeUserId=userStore[data.activeUserId]?data.activeUserId:Object.keys(userStore)[0];localStorage.setItem('mamriimUsers',JSON.stringify(userStore));localStorage.setItem('mamriimActiveUser',activeUserId);localStorage.setItem('mamriimState',JSON.stringify(userStore[activeUserId]));location.reload()}catch(e){toast('קובץ הגיבוי אינו תקין')}};reader.onerror=()=>toast('לא הצלחנו לקרוא את קובץ הגיבוי');reader.readAsText(file)}
     const fitnessPlans={
@@ -972,7 +1006,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     function finishPlacement(){let stage=placeRight<=2?0:placeRight<=4?1:placeRight<=6?2:placeRight<=8?3:4,starts=[1,15,22,28,60],selected=stages[stage];state.day=Math.max(state.day,starts[stage]);state.completed={letters:stage>0,words:false,quiz:false};state.placement={pending:false,stage,score:placeRight,date:today(),appliedSkip:true};state.profile.level=['zero','basic','starter','growing','advanced'][stage];persistState();$('#placementContent').innerHTML=`<div style="text-align:center;padding:15px"><div style="font-size:65px">${selected.icon}</div><small>מצאנו את נקודת ההתחלה המתאימה</small><h2>${selected.name}</h2><p>${selected.desc}</p><div class="card" style="box-shadow:none;background:#f7f6ff"><b>${placeRight} תשובות נכונות מתוך ${activePlacementQuestions.length}</b><br><small>${stage>0?'החומר שכבר ידוע דולג, ומכאן נלמד דברים חדשים.':'נתחיל בלימוד האותיות והצלילים מהבסיס.'}</small></div><button class="btn wide" style="margin-top:15px" onclick="closePlacement()">למסלול שלי</button></div>`}
     function closePlacement(){$('#placementModal').classList.add('hidden');renderAll();toast('המסלול האישי שלך מוכן 🚀')}
     $$('#ageChoices .choice').forEach(b=>b.onclick=()=>{$$('#ageChoices .choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selectedAge=b.dataset.age});
-    $('#profileBtn').onclick=()=>showScreen('settings');$('#closeAvatar').onclick=()=>$('#avatarModal').classList.add('hidden');$('#avatarModal').onclick=e=>{if(e.target===$('#avatarModal'))$('#avatarModal').classList.add('hidden')};
+    $('#profileBtn').onclick=()=>openUsers();$('#profileBtn').title='החלפת פרופיל';$('#closeAvatar').onclick=()=>$('#avatarModal').classList.add('hidden');$('#avatarModal').onclick=e=>{if(e.target===$('#avatarModal'))$('#avatarModal').classList.add('hidden')};
     $('#avatarFile').onchange=e=>{let file=e.target.files[0];if(!file)return;if(!file.type.startsWith('image/'))return toast('אפשר לבחור קובץ תמונה בלבד');let reader=new FileReader();reader.onload=ev=>{let img=new Image();img.onload=()=>{let size=Math.min(img.width,img.height),canvas=document.createElement('canvas');canvas.width=canvas.height=240;let ctx=canvas.getContext('2d');ctx.drawImage(img,(img.width-size)/2,(img.height-size)/2,size,size,0,0,240,240);let a={type:'image',value:canvas.toDataURL('image/jpeg',.78)};if(avatarTarget==='onboard'){selectedAvatar=a;renderAvatarChoices('onboardAvatars')}else{state.profile.avatar=a;save();renderAvatarChoices('profileAvatars');toast('התמונה נשמרה במכשיר 📷')}};img.onerror=()=>toast('לא הצלחנו לקרוא את התמונה');img.src=ev.target.result};reader.readAsDataURL(file);e.target.value=''};
     $('#startBtn').onclick=()=>{let name=$('#nameInput').value.trim();if(!name)return toast('כדאי לכתוב שם כדי שנוכל להכיר');let domains=selectedStartDomain==='both'?['english','fitness']:[selectedStartDomain],chosenLevel=$('#levelInput').value,initialStage={zero:0,basic:1,starter:2,advanced:4}[chosenLevel]||0;state.profile={name,age:selectedAge,level:chosenLevel,time:$('#timeInput').value,avatar:selectedAvatar,domains};state.appLevel=1;state.levelTasks=0;state.placement={pending:domains.includes('english'),stage:initialStage,chosenStage:initialStage};state.lastOpen=today();save();showScreen(selectedStartDomain==='fitness'?'fitness':selectedStartDomain==='both'?'home':'englishHome')};
     window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;updateInstallUI();toast('מתקדמים הותקנה בהצלחה 🎉')});window.addEventListener('pageshow',e=>{if(e.persisted)openMainScreen()});if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{})}
@@ -1040,6 +1074,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
   .entry-option.english-entry strong,.entry-option.fitness-entry strong{font-size:31px}
   .entry-option.english-entry small,.entry-option.fitness-entry small{font-size:15px;font-weight:800;line-height:1.55}
   .entry-option.english-entry b,.entry-option.fitness-entry b{align-self:center}
+</style>
+<style id="v94-google-persistent-consent">
+  .cloud-auth .cloud-sep,.cloud-auth #cloudEmail,.cloud-auth #cloudPassword,.cloud-auth #cloudEmailNext,.cloud-auth .cloud-row{display:none!important}
+  .cloud-consent{padding:5px 0;text-align:right}.cloud-consent h2{margin:8px 0 12px;color:#2d3650}.cloud-consent ul{margin:0;padding-right:22px;color:#4d5870;line-height:1.75}.cloud-consent li{margin:6px 0}.cloud-consent.hidden,#cloudGoogle.hidden{display:none!important}
 </style>
 <script>
 (function(){
@@ -1195,9 +1233,23 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       var auth = document.getElementById('cloudAuth');
       var app = document.querySelector('.app');
       if (app) app.style.visibility = 'visible';
-      if (auth && auth.classList.contains('hidden')) auth.style.pointerEvents = 'none';
+      if (auth) auth.style.pointerEvents = auth.classList.contains('hidden') ? 'none' : 'auto';
     }, 1200);
   });
+</script>
+
+<script id="v92-login-click-fix">
+(function(){
+  function unlockVisibleLogin(){
+    const auth=document.getElementById('cloudAuth');
+    if(auth&&!auth.classList.contains('hidden')) auth.style.pointerEvents='auto';
+    const mark=document.querySelector('.version-mark');
+    if(mark) mark.textContent='גרסה 92 · תיקון לחצני התחברות';
+  }
+  new MutationObserver(unlockVisibleLogin).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class']});
+  window.addEventListener('DOMContentLoaded',unlockVisibleLogin);
+  setTimeout(unlockVisibleLogin,1300);
+})();
 </script>
 
 <style id="v71-deep-forest">
@@ -1350,12 +1402,12 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
   Object.values(userStore).forEach(ensureLifetime);ensureLifetime(state);try{persistState()}catch(e){}
   const bridge=window.MitkadmimCloudBridge;if(bridge){
     bridge.getAccountData=()=>{const uid=state.cloudUser?.uid;if(!uid)return{activeProfileId:activeUserId,profiles:{[activeUserId]:clone(state)}};const prefix=`firebase:${uid}:profile:`,profiles={};Object.entries(userStore).filter(([id])=>id.startsWith(prefix)).slice(0,3).forEach(([id,s])=>{ensureLifetime(s);profiles[id]=clone(s)});return{activeProfileId:activeUserId,profiles}};
-    bridge.activateCloudUser=(u)=>{if(!u?.uid)return;try{persistState()}catch(e){}const prefix=`firebase:${u.uid}:profile:`;let ids=Object.keys(userStore).filter(id=>id.startsWith(prefix)).slice(0,3);if(!ids.length){const legacy=userStore[`firebase:${u.uid}`],candidate=legacy||state,id=prefix+'1';userStore[id]=clone(candidate||defaults);ids=[id]}let chosen=localStorage.getItem(`mitkadmimCloudActive:${u.uid}`);if(!ids.includes(chosen))chosen=ids[0];activeUserId=chosen;state=Object.assign({},defaults,userStore[chosen]||{});state.settings=Object.assign({},defaults.settings,state.settings||{});state.fitness=Object.assign({},defaults.fitness,state.fitness||{});state.cloudUser={uid:u.uid,email:u.email||'',name:u.displayName||'',photoURL:u.photoURL||''};ensureLifetime(state);userStore[chosen]=state;localStorage.setItem('mamriimActiveUser',chosen);localStorage.setItem(`mitkadmimCloudActive:${u.uid}`,chosen);persistState();renderAll();openMainScreen()};
-    bridge.applyAccountData=(payload,u)=>{if(!payload?.profiles||!u?.uid)return;const prefix=`firebase:${u.uid}:profile:`,entries=Object.entries(payload.profiles).filter(([id])=>id.startsWith(prefix)).slice(0,3);if(!entries.length)return;entries.forEach(([id,s])=>{s=Object.assign({},defaults,s||{});s.settings=Object.assign({},defaults.settings,s.settings||{});s.fitness=Object.assign({},defaults.fitness,s.fitness||{});s.cloudUser={uid:u.uid,email:u.email||'',name:u.displayName||'',photoURL:u.photoURL||''};ensureLifetime(s);userStore[id]=s});let chosen=localStorage.getItem(`mitkadmimCloudActive:${u.uid}`)||payload.activeProfileId;if(!userStore[chosen]||!chosen.startsWith(prefix))chosen=entries[0][0];activeUserId=chosen;state=userStore[chosen];localStorage.setItem('mamriimActiveUser',chosen);localStorage.setItem(`mitkadmimCloudActive:${u.uid}`,chosen);persistState();renderAll();openMainScreen()};
+    bridge.activateCloudUser=(u)=>{if(!u?.uid)return;try{persistState()}catch(e){}const prefix=`firebase:${u.uid}:profile:`;let ids=Object.keys(userStore).filter(id=>id.startsWith(prefix)).slice(0,3);if(!ids.length){const legacy=userStore[`firebase:${u.uid}`],candidate=legacy||state,id=prefix+'1';userStore[id]=clone(candidate||defaults);ids=[id]}let chosen=localStorage.getItem(`mitkadmimCloudActive:${u.uid}`);if(!ids.includes(chosen))chosen=ids[0];activeUserId=chosen;state=Object.assign({},defaults,userStore[chosen]||{});state.settings=Object.assign({},defaults.settings,state.settings||{});state.fitness=Object.assign({},defaults.fitness,state.fitness||{});state.cloudUser={uid:u.uid,email:u.email||'',name:u.displayName||'',photoURL:u.photoURL||''};ensureLifetime(state);userStore[chosen]=state;localStorage.setItem('mamriimActiveUser',chosen);localStorage.setItem(`mitkadmimCloudActive:${u.uid}`,chosen);persistState();renderAll();openMainScreen();setTimeout(()=>{if(accountUserEntries().length>1)openUsers()},300)};
+    bridge.applyAccountData=(payload,u)=>{if(!payload?.profiles||!u?.uid)return;const prefix=`firebase:${u.uid}:profile:`,entries=Object.entries(payload.profiles).filter(([id])=>id.startsWith(prefix)).slice(0,3);if(!entries.length)return;entries.forEach(([id,s])=>{s=Object.assign({},defaults,s||{});s.settings=Object.assign({},defaults.settings,s.settings||{});s.fitness=Object.assign({},defaults.fitness,s.fitness||{});s.cloudUser={uid:u.uid,email:u.email||'',name:u.displayName||'',photoURL:u.photoURL||''};ensureLifetime(s);userStore[id]=s});let chosen=localStorage.getItem(`mitkadmimCloudActive:${u.uid}`)||payload.activeProfileId;if(!userStore[chosen]||!chosen.startsWith(prefix))chosen=entries[0][0];activeUserId=chosen;state=userStore[chosen];localStorage.setItem('mamriimActiveUser',chosen);localStorage.setItem(`mitkadmimCloudActive:${u.uid}`,chosen);persistState();renderAll();openMainScreen();setTimeout(()=>{if(accountUserEntries().length>1)openUsers()},300)};
   }
   const originalSwitch=window.switchUser||switchUser;window.switchUser=function(id){if(state.cloudUser?.uid)localStorage.setItem(`mitkadmimCloudActive:${state.cloudUser.uid}`,id);return originalSwitch(id)};try{switchUser=window.switchUser}catch(e){}
   function polishFitness(){const box=document.getElementById('fitnessContent');if(!box)return;const progress=[...box.querySelectorAll('h2')].some(h=>h.textContent.includes('התקדמות והישגים בכושר'));box.classList.toggle('fitness-progress-v75',progress)}
-  function polishProfiles(){const modal=document.querySelector('#usersModal .modal');if(modal&&!modal.querySelector('.profile-limit-note')){const p=document.createElement('div');p.className='profile-limit-note';p.textContent='אפשר ליצור עד 3 משתמשים בכל חשבון מייל. לכל משתמש נשמרים בנפרד הנקודות, הדרגה, האנגלית והכושר.';modal.querySelector('#usersList')?.before(p)}}
+  function polishProfiles(){const modal=document.querySelector('#usersModal .modal');if(modal&&!modal.querySelector('.profile-limit-note')){const p=document.createElement('div');p.className='profile-limit-note';p.textContent='אפשר ליצור עד 3 פרופילים בכל חשבון. לכל פרופיל נשמרים בנפרד הנקודות, הדרגה, האנגלית והכושר.';modal.querySelector('#usersList')?.before(p)}}
   function polish(){ensureLifetime(state);polishFitness();polishProfiles()}
   new MutationObserver(polish).observe(document.body,{childList:true,subtree:true});setTimeout(polish,900);
 })();
@@ -1632,7 +1684,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 </style>
 <script id="v86-preview-separated">
 (function(){
-  function polish(){document.getElementById('desertPreviewLaunchV81')?.remove();document.getElementById('desertPreviewV81')?.remove();const mark=document.querySelector('.version-mark');if(mark)mark.textContent='גרסה 86 · מעבר מהיער למדבר'}
+  function polish(){document.getElementById('desertPreviewLaunchV81')?.remove();document.getElementById('desertPreviewV81')?.remove();const mark=document.querySelector('.version-mark');if(mark)mark.textContent='גרסה 94 · כניסת Google קבועה'}
   setInterval(polish,500);setTimeout(polish,300);
 })();
 </script>

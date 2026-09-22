@@ -1,7 +1,7 @@
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, onAuthStateChanged, signOut
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
+  setPersistence, browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, serverTimestamp
@@ -12,8 +12,7 @@ const authBox = document.getElementById('cloudAuth');
 const status = document.getElementById('cloudAuthStatus');
 const chip = document.getElementById('cloudUserChip');
 const chipText = document.getElementById('cloudUserText');
-const emailInput = document.getElementById('cloudEmail');
-const passwordInput = document.getElementById('cloudPassword');
+const consentBox = document.getElementById('cloudConsent');
 
 let auth;
 let db;
@@ -59,7 +58,7 @@ async function saveCloud(force = false) {
     fitnessSavedAt: Number(state.fitness?.savedAt) || Date.now(),
     updatedAt: serverTimestamp(),
     lastSeenAt: serverTimestamp(),
-    appVersion: '82-desert-grade12-admin'
+    appVersion: '94-google-persistent-consent'
   }, {merge: true});
 
   lastSavedJson = serialized;
@@ -115,6 +114,7 @@ async function loadOrCreate(user) {
 
 function showSignedIn(user) {
   authBox?.classList.add('hidden');
+  if (authBox) authBox.style.pointerEvents = 'none';
   chip?.classList.add('show');
   if (chipText) chipText.textContent = user.displayName || user.email || 'מחובר לענן';
 }
@@ -122,12 +122,43 @@ function showSignedIn(user) {
 function showSignedOut() {
   chip?.classList.remove('show');
   authBox?.classList.remove('hidden');
+  if (authBox) authBox.style.pointerEvents = 'auto';
+  consentBox?.classList.add('hidden');
+  document.getElementById('cloudGoogle')?.classList.remove('hidden');
   setStatus('התחברו כדי שההתקדמות תישמר בכל מכשיר', false);
+}
+
+function consentKey(user) {
+  return `mitkadmimGuidelinesAccepted:v1:${user.uid}`;
+}
+
+function hasAcceptedGuidelines(user) {
+  return localStorage.getItem(consentKey(user)) === 'yes';
+}
+
+function requestGuidelinesConsent(user) {
+  return new Promise(resolve => {
+    authBox?.classList.remove('hidden');
+    if (authBox) authBox.style.pointerEvents = 'auto';
+    document.getElementById('cloudGoogle')?.classList.add('hidden');
+    consentBox?.classList.remove('hidden');
+    setStatus('', false);
+
+    const agree = document.getElementById('cloudConsentAgree');
+    const disagree = document.getElementById('cloudConsentDisagree');
+    agree.onclick = () => {
+      localStorage.setItem(consentKey(user), 'yes');
+      consentBox?.classList.add('hidden');
+      resolve(true);
+    };
+    disagree.onclick = () => resolve(false);
+  });
 }
 
 async function boot() {
   if (!cfg?.projectId) {
     authBox?.classList.remove('hidden');
+    if (authBox) authBox.style.pointerEvents = 'auto';
     setStatus('חסרים פרטי Firebase');
     return;
   }
@@ -135,29 +166,12 @@ async function boot() {
   const app = initializeApp(cfg);
   auth = getAuth(app);
   db = getFirestore(app);
+  await setPersistence(auth, browserLocalPersistence);
 
   document.getElementById('cloudGoogle').onclick = async () => {
     try {
       setStatus('פותח התחברות...', false);
       await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (error) {
-      setStatus(humanError(error));
-    }
-  };
-
-  document.getElementById('cloudLogin').onclick = async () => {
-    try {
-      setStatus('מתחבר...', false);
-      await signInWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
-    } catch (error) {
-      setStatus(humanError(error));
-    }
-  };
-
-  document.getElementById('cloudRegister').onclick = async () => {
-    try {
-      setStatus('יוצר חשבון...', false);
-      await createUserWithEmailAndPassword(auth, emailInput.value.trim(), passwordInput.value);
     } catch (error) {
       setStatus(humanError(error));
     }
@@ -174,6 +188,13 @@ async function boot() {
       lastSavedJson = '';
       showSignedOut();
       return;
+    }
+    if (!hasAcceptedGuidelines(user)) {
+      const accepted = await requestGuidelinesConsent(user);
+      if (!accepted) {
+        await signOut(auth);
+        return;
+      }
     }
     showSignedIn(user);
     try {
@@ -230,8 +251,9 @@ window.MitkadmimCloud = {
 
 if (location.protocol === 'file:') {
   authBox?.classList.remove('hidden');
+  if (authBox) authBox.style.pointerEvents = 'auto';
   setStatus('כדי להתחבר ולשמור בענן, פתחו את האפליקציה דרך GitHub Pages ולא דרך file:///');
-  ['cloudGoogle', 'cloudLogin', 'cloudRegister'].forEach(id => {
+  ['cloudGoogle'].forEach(id => {
     const button = document.getElementById(id);
     if (button) button.disabled = true;
   });
